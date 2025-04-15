@@ -29,23 +29,13 @@
     fetch(sheetURL)
       .then(response => response.json())
       .then(data => {
-        const columns = [
-          { title: "Kolom A" },
-          { title: "Kolom B" },
-          { title: "Kolom C" },
-          { title: "Kolom D" },
-          { title: "Kolom E" },
-          { title: "Kolom F" },
-          { title: "Kolom G" },
-          { title: "Kolom H" },
-          { title: "Kolom AP" },
-          { title: "Kolom BN" },
-          { title: "Kolom X" },
-          { title: "Kolom AD" }
-        ];
-
+        const headers = data[0]; // Baris pertama adalah header
+        const rows = data.slice(1); // Sisanya adalah data
+    
+        const columns = headers.map(title => ({ title }));
+    
         $('#dataTable').DataTable({
-          data: data.slice(1), // Hilangkan header
+          data: rows,
           columns: columns,
           responsive: true,
           paging: true,
