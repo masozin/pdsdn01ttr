@@ -1,48 +1,69 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MasterData Interaktif</title>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      padding: 1rem;
-    }
-    table {
-      width: 100%;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>MasterData Interaktif</title>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 1rem;
+        }
+
+        table {
+            width: 100%;
+        }
+    </style>
 </head>
+
 <body>
-  <h2>MasterData Interaktif</h2>
-  <table id="dataTable" class="display responsive nowrap"></table>
+    <h2>MasterData Interaktif</h2>
+    <table id="dataTable" class="display responsive nowrap"></table>
 
-  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
-  <script>
-    const sheetURL = "https://script.google.com/macros/s/AKfycbw97rv9LNYV14SEAaCbRXdbcgpYPVQy1pwH2LfJ-Ma2JG2Yb4oQWEAQfIBxKXKjLpg/exec"; // Ganti dengan URL Web App Anda
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
 
-    fetch(sheetURL)
-      .then(response => response.json())
-      .then(data => {
-        const headers = data[0]; // Baris pertama adalah header
-        const rows = data.slice(1); // Sisanya adalah data
-    
-        const columns = headers.map(title => ({ title }));
-    
-        $('#dataTable').DataTable({
-          data: rows,
-          columns: columns,
-          responsive: true,
-          paging: true,
-          searching: true
-        });
-      })
-      .catch(error => console.error("Gagal memuat data:", error));
-  </script>
+    <script>
+        const sheetURL = "https://script.google.com/macros/s/AKfycbw97rv9LNYV14SEAaCbRXdbcgpYPVQy1pwH2LfJ-Ma2JG2Yb4oQWEAQfIBxKXKjLpg/exec"; // Ganti dengan URL Web App Anda
+        function formatDate(isoDate) {
+            const d = new Date(isoDate);
+            if (isNaN(d)) return isoDate; // kalau bukan tanggal, tampilkan apa adanya
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`; // format dd/mm/yyyy
+        }
+
+        fetch(sheetURL)
+            .then(response => response.json())
+            .then(data => {
+                const headers = data[0];
+                const rows = data.slice(1).map(row => {
+                    return row.map((val, idx) => {
+                        // misalnya kolom ke-6 (index 5) adalah tanggal
+                        if (headers[idx].toLowerCase().includes('tanggal')) {
+                            return formatDate(val);
+                        }
+                        return val;
+                    });
+                });
+
+                const columns = headers.map(title => ({ title }));
+
+                $('#dataTable').DataTable({
+                    data: rows,
+                    columns: columns,
+                    responsive: true,
+                    paging: true,
+                    searching: true
+                });
+            })
+            .catch(error => console.error("Gagal memuat data:", error));
+    </script>
 </body>
+
 </html>
