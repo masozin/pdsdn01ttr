@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MasterData Interaktif</title>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 1rem;
+    }
+    table {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <h2>MasterData Interaktif</h2>
+  <table id="dataTable" class="display responsive nowrap"></table>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+  <script>
+    const sheetURL = "https://script.google.com/macros/s/AKfycbxxxxx/exec"; // Ganti dengan URL Web App Anda
+
+    fetch(sheetURL)
+      .then(response => response.json())
+      .then(data => {
+        const columns = [
+          { title: "Kolom A" },
+          { title: "Kolom B" },
+          { title: "Kolom C" },
+          { title: "Kolom D" },
+          { title: "Kolom E" },
+          { title: "Kolom F" },
+          { title: "Kolom G" },
+          { title: "Kolom H" },
+          { title: "Kolom AP" },
+          { title: "Kolom BN" },
+          { title: "Kolom X" },
+          { title: "Kolom AD" }
+        ];
+
+        $('#dataTable').DataTable({
+          data: data.slice(1), // Hilangkan header
+          columns: columns,
+          responsive: true,
+          paging: true,
+          searching: true
+        });
+      })
+      .catch(error => console.error("Gagal memuat data:", error));
+  </script>
+</body>
+</html>
