@@ -430,6 +430,7 @@
                 table = $('#dataTable').DataTable({
                     lengthChange: true,
                     pageLength: 40,
+                    lengthMenu: [ [50, 100, 150, 200, 250, 300, -1], [50, 100, 150, 200, 250, 300, "Semua"] ]
                     data: rows,
                     columns: columns,
                     responsive: true,
