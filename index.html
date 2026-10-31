@@ -140,6 +140,7 @@ code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
       <button :class="{on:page==='aktif'}" @click="go('aktif')"><i class="ti ti-users ico"></i>Siswa Aktif<span class="badge" x-text="loaded?cnt.aktif:'-'"></span></button>
       <button :class="{on:page==='keluar'}" @click="go('keluar')"><i class="ti ti-door-exit ico"></i>PD Keluar<span class="badge" x-text="loaded?keluarRows.length:'-'"></span></button>
       <button :class="{on:page==='absen'}" @click="go('absen')"><i class="ti ti-calendar-check ico"></i>Rekap Absen<span class="badge" x-text="absenReady?absenRows.length:'-'"></span></button>
+      <button @click="window.open('https://masozin.github.io/dh-siswa/', '_blank')"><i class="ti ti-vocabulary ico"></i>Lembar Absen</button>
     </nav>
     <div class="side-foot">Sumber: Google Sheets<br>Sheet <b x-text="cfg.SHEET_NAME"></b></div>
   </aside>
