@@ -1,561 +1,772 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SDN 01 Totorejo</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Data Siswa - SD Negeri 01 Toto Rejo</title>
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+<style>
+:root{
+  --bg:#f3f5fb; --card:#fff; --ink:#1e2440; --muted:#6b7394; --line:#e6e9f4;
+  --primary:#4f46e5; --primary2:#7c3aed; --radius:16px;
+  --aktif:#10b981; --pindah:#f59e0b; --keluar:#ef4444; --lulus:#3b82f6; --tidak:#64748b;
+  --shadow:0 4px 20px rgba(30,36,64,.07);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+[x-cloak]{display:none!important}
 
-    <!-- AdminLTE & dependencies -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/css/adminlte.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/datatables.net-bs4/css/dataTables.bootstrap4.min.css">
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css">
-    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script> -->
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@3.2/dist/js/adminlte.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jszip@3.1.3/dist/jszip.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.1.53/build/pdfmake.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/pdfmake@0.1.53/build/vfs_fonts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net-buttons/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/datatables.net-buttons/js/buttons.print.min.js"></script>
+.layout{display:flex;min-height:100vh}
+.sidebar{width:250px;background:linear-gradient(180deg,#312e81,#4f46e5 60%,#7c3aed);color:#fff;padding:24px 16px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;flex-shrink:0}
+.brand{display:flex;gap:12px;align-items:center;padding:0 8px 24px;border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:20px}
+.brand .logo{width:46px;height:46px;border-radius:12px;background:#fff;display:grid;place-items:center;padding:4px;overflow:hidden;flex-shrink:0}
+.brand .logo img{width:100%;height:100%;object-fit:contain}
+.brand b{display:block;font-size:14px;line-height:1.2}
+.brand small{opacity:.75;font-size:11px}
+.nav button{width:100%;display:flex;align-items:center;gap:12px;padding:12px 14px;border:0;background:transparent;color:rgba(255,255,255,.8);font:inherit;font-weight:500;border-radius:12px;cursor:pointer;margin-bottom:6px;text-align:left;transition:.15s}
+.nav button:hover{background:rgba(255,255,255,.12);color:#fff}
+.nav button.on{background:#fff;color:var(--primary);font-weight:700;box-shadow:0 6px 16px rgba(0,0,0,.18)}
+.nav .ico{font-size:18px;width:22px;text-align:center}
+.nav .badge{margin-left:auto;background:rgba(255,255,255,.2);padding:1px 9px;border-radius:99px;font-size:11px;font-weight:700}
+.nav button.on .badge{background:#eef0ff;color:var(--primary)}
+.side-foot{margin-top:auto;font-size:11px;opacity:.7;padding:0 8px}
 
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
+.main{flex:1;min-width:0;padding:24px 28px 40px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.topbar h1{font-size:22px;font-weight:800;letter-spacing:-.3px}
+.topbar p{color:var(--muted);font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:8px;border:0;font:inherit;font-weight:600;padding:10px 16px;border-radius:12px;cursor:pointer;transition:.15s}
+.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;box-shadow:0 6px 16px rgba(79,70,229,.3)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-green{background:#10b981;color:#fff;box-shadow:0 6px 16px rgba(16,185,129,.28)}
+.btn:disabled{opacity:.6;cursor:wait}
+.spin{animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+.ti.spin{display:inline-block}
+.btn .ti{font-size:18px}
+.panel h3 .ti{font-size:20px;color:var(--primary)}
+.stat .stat-ico{position:absolute;right:14px;top:14px;font-size:26px;color:var(--c);opacity:.25}
+.state .big{color:var(--primary)}
+.search{position:relative}
+.search .ti{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:18px;pointer-events:none}
+.search input{padding-left:40px}
 
-    <style>
-        .logo-img {
-            width: 40px;
-            height: auto;
-            margin-right: 10px;
-        }
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--c)}
+.stat .lbl{color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.stat .num{font-size:32px;font-weight:800;color:var(--c);line-height:1.2;margin-top:4px}
+.stat .sub{font-size:12px;color:var(--muted)}
+.stat.total{--c:var(--primary)}
 
-        #loading {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 150px;
-            font-size: 1.2em;
-        }
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.panel{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);min-width:0}
+.panel h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.panel h3 .tag{font-size:11px;background:#eef0ff;color:var(--primary);padding:2px 10px;border-radius:99px;font-weight:600}
+.scroll{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;white-space:nowrap}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--line)}
+thead th{background:#f7f8fe;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700;position:sticky;top:0}
+tbody tr:hover{background:#fafbff}
+tbody tr:last-child td{border-bottom:0}
+td.n,th.n{text-align:center}
+tfoot td{background:#f7f8fe;font-weight:800;border-top:2px solid var(--line);border-bottom:0}
+td.tot{font-weight:700;background:#fbfbff}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable:hover{color:var(--primary)}
+.arrow{opacity:.35;margin-left:4px;font-size:10px}
+.arrow.on{opacity:1;color:var(--primary)}
+.pill{display:inline-block;padding:2px 10px;border-radius:99px;font-size:12px;font-weight:600;color:#fff}
+.jk{display:inline-block;width:24px;height:24px;line-height:24px;border-radius:50%;text-align:center;font-weight:700;font-size:12px}
+.jk.L{background:#dbeafe;color:#1d4ed8}.jk.P{background:#fce7f3;color:#be185d}
+.zero{color:#c3c8dc}
+.bar{height:8px;border-radius:99px;background:#eef0ff;min-width:90px;overflow:hidden;flex:1}
+.bar i{display:block;height:100%;border-radius:99px}
+.pctcell{display:flex;align-items:center;gap:10px}
+.warn{background:#fffbeb;border:1px solid #fde68a;color:#92400e;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:13px}
 
-        #dataSection {
-            display: none;
-            animation: fadeIn 0.6s ease forwards;
-        }
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.toolbar .grow{flex:1;min-width:200px}
+input[type=text],input[type=date],select{font:inherit;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--ink);outline:none;width:100%}
+input:focus,select:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+.toolbar select{width:auto;min-width:150px}
+.pager{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;color:var(--muted);font-size:13px}
+.pager .btns{display:flex;gap:6px;align-items:center}
+.pager button{border:1px solid var(--line);background:#fff;border-radius:10px;padding:6px 12px;cursor:pointer;font:inherit;font-weight:600}
+.pager button:disabled{opacity:.4;cursor:default}
+.pager select{width:auto;padding:6px 10px}
+.empty{text-align:center;color:var(--muted);padding:34px 10px}
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
+.state{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:50px 24px;text-align:center}
+.state .big{font-size:42px;margin-bottom:8px}
+.state.err{border:1px solid #fecaca;background:#fff7f7;text-align:left;padding:24px}
+.state.err ul{margin:10px 0 0 20px;color:#444}
+.loader{width:42px;height:42px;border:4px solid #e0e3f5;border-top-color:var(--primary);border-radius:50%;margin:0 auto 14px;animation:spin .9s linear infinite}
+code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
+.age-note{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-size:13px}
+.age-note input{width:auto;padding:6px 10px}
 
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .rombel-filter,
-        .toggle-mode {
-            margin: 6px 0;
-        }
-
-        .dark-mode {
-            background: #121212;
-            color: #e0e0e0;
-        }
-
-        .dark-mode table {
-            color: white;
-        }
-
-        .dark-mode .dt-button {
-            background-color: #333 !important;
-            color: #fff !important;
-        }
-
-        .dark-mode .dataTables_filter input {
-            color: #fff;
-        }
-
-        /* .dark-mode .navbar {
-            background-color: #333;
-            color: #fff;
-        } */
-
-        .spinner {
-            border: 6px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 6px solid #3498db;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+@media(max-width:900px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;height:auto;position:sticky;top:0;z-index:20;padding:10px 12px;flex-direction:row;align-items:center;gap:8px;overflow-x:auto}
+  .brand{border:0;margin:0;padding:0 8px 0 0}
+  .brand small,.side-foot,.nav .badge{display:none}
+  .brand b{font-size:12px;white-space:nowrap}
+  .nav{display:flex;gap:6px}
+  .nav button{margin:0;padding:9px 12px;white-space:nowrap;width:auto}
+  .main{padding:16px 14px 32px}
+  .grid2{grid-template-columns:1fr}
+  .topbar h1{font-size:19px}
+}
+@media(max-width:520px){ .brand .logo{display:none} .stat .num{font-size:26px} }
+</style>
 </head>
+<body x-data="app()" x-init="init()" x-cloak>
+<div class="layout">
 
-<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed">
-    <div class="wrapper">
+  <!-- SIDEBAR / NAV -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo"><img src="logo.png" alt="Logo sekolah"></div>
+      <div><b x-text="cfg.NAMA_SEKOLAH"></b><small>Dashboard Data Siswa</small></div>
+    </div>
+    <nav class="nav">
+      <button :class="{on:page==='dashboard'}" @click="go('dashboard')"><i class="ti ti-layout-dashboard ico"></i>Dashboard</button>
+      <button :class="{on:page==='aktif'}" @click="go('aktif')"><i class="ti ti-users ico"></i>Siswa Aktif<span class="badge" x-text="loaded?cnt.aktif:'-'"></span></button>
+      <button :class="{on:page==='keluar'}" @click="go('keluar')"><i class="ti ti-door-exit ico"></i>PD Keluar<span class="badge" x-text="loaded?keluarRows.length:'-'"></span></button>
+      <button :class="{on:page==='absen'}" @click="go('absen')"><i class="ti ti-calendar-check ico"></i>Rekap Absen<span class="badge" x-text="absenReady?absenRows.length:'-'"></span></button>
+    </nav>
+    <div class="side-foot">Sumber: Google Sheets<br>Sheet <b x-text="cfg.SHEET_NAME"></b></div>
+  </aside>
 
-        <div id="loginBox" class="position-fixed top-0 left-0 w-100 h-100 justify-content-center align-items-center"
-            style="background-color: rgba(0,0,0,0.5); z-index: 9999; display: none;">
-            <div class="card p-4" style="min-width: 300px;">
-                <h4 class="text-center mb-3">Login Pengguna</h4>
-                <input type="text" id="username" class="form-control mb-2" placeholder="Username">
-                <input type="password" id="password" class="form-control mb-3" placeholder="Password">
-                <div class="d-flex justify-content-between">
-                    <button id="cancelBtn" class="btn btn-secondary">Batal</button>
-                    <button id="loginBtn" class="btn btn-primary">Login</button>
-                </div>
-                <div id="loginError" class="text-danger mt-2 text-center" style="display:none;">Username atau password
-                    salah
-                </div>
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <h1 x-text="{dashboard:'Ringkasan Data Siswa',aktif:'Daftar Siswa Aktif',keluar:'Daftar Peserta Didik Keluar',absen:'Rekap Absensi Siswa'}[page]"></h1>
+        <p><span x-text="cfg.NAMA_SEKOLAH"></span> · <span x-text="updatedAt ? 'Data dimuat '+updatedAt : 'Belum ada data'"></span></p>
+      </div>
+      <button class="btn btn-primary" @click="load()" :disabled="loading">
+        <i class="ti ti-refresh" :class="{spin:loading}"></i>
+        <span x-text="loading?'Memuat...':'Refresh Data'"></span>
+      </button>
+    </div>
+
+    <!-- loading -->
+    <div class="state" x-show="loading && !loaded && !error"><div class="loader"></div><b>Mengambil data dari Google Sheets…</b></div>
+
+    <!-- error -->
+    <div class="state err" x-show="error" x-cloak>
+      <b style="font-size:16px"><i class="ti ti-alert-triangle" style="color:#ef4444;vertical-align:-2px"></i> Data gagal dimuat</b>
+      <p style="margin-top:6px" x-text="error"></p>
+      <ul>
+        <li>Pastikan <code>API_URL</code> di bagian <code>CONFIG</code> pada file ini sudah diisi URL Web App (berakhiran <code>/exec</code>).</li>
+        <li>Pastikan Web App di-deploy dengan <b>Akses: Siapa saja</b>, dan setelah mengubah script lakukan <b>Deploy → Kelola deployment → Versi baru</b>.</li>
+        <li>Pastikan nama sheet <code>APPDATA</code> dan header ada di baris 1.</li>
+      </ul>
+    </div>
+
+    <template x-if="loaded">
+    <div>
+
+      <!-- ======== 1. DASHBOARD ======== -->
+      <section x-show="page==='dashboard'">
+        <div class="cards">
+          <div class="stat total"><i class="ti ti-users-group stat-ico"></i><div class="lbl">Total Data</div><div class="num" x-text="students.length"></div><div class="sub">semua status</div></div>
+          <template x-for="s in statusList" :key="s.name">
+            <div class="stat" :style="'--c:'+s.color">
+              <i class="ti stat-ico" :class="s.icon"></i>
+              <div class="lbl" x-text="s.name"></div>
+              <div class="num" x-text="s.count"></div>
+              <div class="sub" x-text="students.length?(s.count/students.length*100).toFixed(1)+'%':''"></div>
             </div>
+          </template>
         </div>
 
-        <!-- Navbar -->
-        <nav class="main-header navbar navbar-expand navbar-light">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link" data-widget="pushmenu" href="#"><i class="fas fa-bars"></i></a>
-                </li>
-                <li class="nav-item d-flex align-items-center">
-                    <img src="logo sdn new 4.png" alt="Logo" class="logo-img">
-                    <span class="font-weight-bold">SDN 01 Totorejo</span>
-                </li>
-            </ul>
-            <ul class="navbar-nav ml-auto align-items-center d-none d-md-flex">
-                <li class="nav-item item">
-                    <a href="#" id="toggleDarkMode" class="nav-link dark-mode-toggle">
-                        <i class="fas fa-moon"></i>
-                    </a>
-                </li>
-                <li class="nav-item item">
-                    <a href="#" id="authLink" class="nav-link auth-toggle" onclick="showLogin()">
-                        <i class="fas fa-sign-in-alt mr-1"></i> Login
-                    </a>
-                </li>
-            </ul>
-        </nav>
+        <div class="grid2">
+          <div class="panel">
+            <h3><i class="ti ti-gender-bigender"></i> Siswa Aktif per Tingkat &amp; Jenis Kelamin</h3>
+            <div class="scroll"><table>
+              <thead><tr><th>Tingkat</th><th class="n">L</th><th class="n">P</th><th class="n">Jumlah</th></tr></thead>
+              <tbody>
+                <template x-for="r in pvJK.rows" :key="r.label">
+                  <tr><td x-text="r.label"></td>
+                    <template x-for="c in r.cells"><td class="n" :class="{zero:!c}" x-text="c"></td></template>
+                    <td class="n tot" x-text="r.total"></td></tr>
+                </template>
+                <tr x-show="!pvJK.rows.length"><td colspan="4" class="empty">Tidak ada siswa aktif</td></tr>
+              </tbody>
+              <tfoot><tr><td>Total</td><template x-for="c in pvJK.totals"><td class="n" x-text="c"></td></template><td class="n" x-text="pvJK.grand"></td></tr></tfoot>
+            </table></div>
+          </div>
 
-        <!-- Sidebar -->
-        <aside class="main-sidebar sidebar-dark-primary elevation-4">
-            <a href="#" class="brand-link text-center">
-                <span class="brand-text font-weight-light">SDN 01 Totorejo</span>
-            </a>
-            <div class="sidebar">
-                <nav class="mt-2">
-                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
-                                <p>Dashboard</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <i class="nav-icon fas fa-table"></i>
-                                <p>Data Siswa</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-file-alt"></i>
-                                <p>Laporan</p>
-                            </a>
-                        </li>
-                        <li class="nav-item d-block d-md-none">
-                            <a href="#" id="toggleDarkModeMobile" class="nav-link dark-mode-toggle">
-                                <i class="fas fa-moon nav-icon"></i>
-                                <p>Dark Mode</p>
-                            </a>
-                        </li>
-                        <li class="nav-item d-block d-md-none">
-                            <a href="#" id="authLinkMobile" class="nav-link auth-toggle" onclick="showLogin()">
-                                <i class="fas fa-sign-in-alt nav-icon"></i>
-                                <p>Login</p>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </aside>
-
-        <!-- Content Wrapper -->
-        <div class="content-wrapper">
-            <div class="content-header">
-                <div class="container-fluid">
-                    <div class="row mb-2">
-                        <div class="col-sm-6">
-                            <h1 class="m-0">Data Siswa</h1>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content">
-                <div class="container-fluid">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="d-flex flex-wrap justify-content-between align-items-center">
-                                <div class="rombel-filter mb-2">
-                                    <label for="rombelSelect">Rombel </label>
-                                    <select id="rombelSelect" class="form-control d-inline-block" style="width:auto;">
-                                        <option value="">Semua</option>
-                                    </select>
-                                </div>
-                                <div class="btn-group mb-2 crud-only" style="display: none;">
-                                    <button id="btnTambah" class="btn btn-success">Tambah Siswa</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div id="loading" class="justify-content-center align-items-center flex-column">
-                                <div class="spinner p-4"></div>
-                                <div>Memuat data...</div>
-                            </div>
-                            <div id="dataSection" class="table-responsive">
-                                <table id="dataTable" class="display nowrap table table-striped" style="width:100%">
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          <div class="panel">
+            <h3><i class="ti ti-building-mosque"></i> Siswa Aktif per Tingkat &amp; Agama</h3>
+            <div class="scroll"><table>
+              <thead><tr><th>Tingkat</th><template x-for="c in pvAgama.cols"><th class="n" x-text="c"></th></template><th class="n">Jumlah</th></tr></thead>
+              <tbody>
+                <template x-for="r in pvAgama.rows" :key="r.label">
+                  <tr><td x-text="r.label"></td>
+                    <template x-for="c in r.cells"><td class="n" :class="{zero:!c}" x-text="c"></td></template>
+                    <td class="n tot" x-text="r.total"></td></tr>
+                </template>
+                <tr x-show="!pvAgama.rows.length"><td :colspan="pvAgama.cols.length+2" class="empty">Tidak ada siswa aktif</td></tr>
+              </tbody>
+              <tfoot><tr><td>Total</td><template x-for="c in pvAgama.totals"><td class="n" x-text="c"></td></template><td class="n" x-text="pvAgama.grand"></td></tr></tfoot>
+            </table></div>
+          </div>
         </div>
 
-        <!-- Modal Form -->
-        <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <form id="dataForm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="formModalLabel">Form Data</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Tutup">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Tambahkan input sesuai kebutuhan -->
-                            <div class="form-group">
-                                <label for="nama">Nama</label>
-                                <input type="text" class="form-control" id="nama" name="nama" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="kelas">Kelas</label>
-                                <input type="text" class="form-control" id="kelas" name="kelas" required>
-                            </div>
-                            <!-- Tambah input lainnya sesuai struktur datamu -->
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
-                        </div>
-                    </div>
-                </form>
+        <div class="panel">
+          <h3><i class="ti ti-cake"></i> Pivot Siswa Aktif: Tingkat × Usia <span class="tag">tahun</span></h3>
+          <div class="age-note">
+            Usia dihitung per tanggal:
+            <input type="date" x-model="refDate" @change="hitung()">
+            <button class="btn" style="padding:6px 12px;background:#eef0ff;color:var(--primary)" @click="refDate=todayISO();hitung()">Hari ini</button>
+          </div>
+          <div class="scroll"><table>
+            <thead><tr><th>Tingkat</th><template x-for="c in pvUsia.cols"><th class="n" x-text="c"></th></template><th class="n">Jumlah</th></tr></thead>
+            <tbody>
+              <template x-for="r in pvUsia.rows" :key="r.label">
+                <tr><td x-text="r.label"></td>
+                  <template x-for="c in r.cells"><td class="n" :class="{zero:!c}" x-text="c"></td></template>
+                  <td class="n tot" x-text="r.total"></td></tr>
+              </template>
+              <tr x-show="!pvUsia.rows.length"><td :colspan="pvUsia.cols.length+2" class="empty">Tidak ada siswa aktif</td></tr>
+            </tbody>
+            <tfoot><tr><td>Total</td><template x-for="c in pvUsia.totals"><td class="n" x-text="c"></td></template><td class="n" x-text="pvUsia.grand"></td></tr></tfoot>
+          </table></div>
+          <p x-show="pvUsia.cols.includes('?')" style="margin-top:10px;color:var(--muted);font-size:12px">Kolom “?” = tanggal lahir kosong / format tidak terbaca.</p>
+        </div>
+      </section>
+
+      <!-- ======== 2. SISWA AKTIF ======== -->
+      <section x-show="page==='aktif'">
+        <div class="panel">
+          <div class="toolbar">
+            <div class="search grow"><i class="ti ti-search"></i><input type="text" placeholder="Cari nama siswa…" x-model.debounce.200ms="t.aktif.q" @input="t.aktif.page=1"></div>
+            <select x-model="t.aktif.filter" @change="t.aktif.page=1">
+              <option value="">Semua Kelas</option>
+              <template x-for="k in kelasList" :key="k"><option :value="k" x-text="'Kelas '+k"></option></template>
+            </select>
+            <button class="btn btn-green" @click="exportXlsx('aktif')"><i class="ti ti-file-spreadsheet"></i> Download XLSX</button>
+          </div>
+          <div class="scroll" style="max-height:68vh">
+            <table>
+              <thead><tr>
+                <th class="n">No</th>
+                <template x-for="c in colsAktif" :key="c.k">
+                  <th class="sortable" @click="sortBy('aktif',c)"><span x-text="c.k"></span><span class="arrow" :class="{on:t.aktif.sort===c.k}" x-text="t.aktif.sort===c.k?(t.aktif.dir>0?'▲':'▼'):'↕'"></span></th>
+                </template>
+              </tr></thead>
+              <tbody>
+                <template x-for="(r,i) in vAktif.pageRows" :key="r._id">
+                  <tr><td class="n" x-text="vAktif.start+i+1"></td>
+                    <template x-for="c in colsAktif" :key="c.k">
+                      <td>
+                        <template x-if="c.k==='JK'"><span class="jk" :class="r.JK" x-text="r.JK"></span></template>
+                        <template x-if="c.k!=='JK'"><span x-text="tampil(r,c)"></span></template>
+                      </td>
+                    </template>
+                  </tr>
+                </template>
+                <tr x-show="!vAktif.rows.length"><td :colspan="colsAktif.length+1" class="empty">Tidak ada data yang cocok</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pager">
+            <div>Menampilkan <b x-text="vAktif.rows.length?vAktif.start+1:0"></b>–<b x-text="vAktif.start+vAktif.pageRows.length"></b> dari <b x-text="vAktif.rows.length"></b> siswa</div>
+            <div class="btns">
+              <select x-model.number="t.aktif.per" @change="t.aktif.page=1"><option>25</option><option>50</option><option>100</option><option value="100000">Semua</option></select>
+              <button :disabled="t.aktif.page<=1" @click="t.aktif.page--">‹ Prev</button>
+              <span x-text="t.aktif.page+' / '+vAktif.pages"></span>
+              <button :disabled="t.aktif.page>=vAktif.pages" @click="t.aktif.page++">Next ›</button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======== 3. PD KELUAR ======== -->
+      <section x-show="page==='keluar'">
+        <div class="panel">
+          <div class="toolbar">
+            <div class="search grow"><i class="ti ti-search"></i><input type="text" placeholder="Cari nama…" x-model.debounce.200ms="t.keluar.q" @input="t.keluar.page=1"></div>
+            <select x-model="t.keluar.filter" @change="t.keluar.page=1">
+              <option value="">Semua Status</option>
+              <template x-for="k in ketList" :key="k"><option :value="k" x-text="k"></option></template>
+            </select>
+          </div>
+          <div class="scroll" style="max-height:68vh">
+            <table>
+              <thead><tr>
+                <th class="n">No</th>
+                <template x-for="c in colsKeluar" :key="c.k">
+                  <th class="sortable" @click="sortBy('keluar',c)"><span x-text="c.k"></span><span class="arrow" :class="{on:t.keluar.sort===c.k}" x-text="t.keluar.sort===c.k?(t.keluar.dir>0?'▲':'▼'):'↕'"></span></th>
+                </template>
+              </tr></thead>
+              <tbody>
+                <template x-for="(r,i) in vKeluar.pageRows" :key="r._id">
+                  <tr><td class="n" x-text="vKeluar.start+i+1"></td>
+                    <template x-for="c in colsKeluar" :key="c.k">
+                      <td>
+                        <template x-if="c.k==='JK'"><span class="jk" :class="r.JK" x-text="r.JK"></span></template>
+                        <template x-if="c.k==='Ket'"><span class="pill" :style="'background:'+warna(r.Ket)" x-text="r.Ket||'-'"></span></template>
+                        <template x-if="c.k!=='JK' && c.k!=='Ket'"><span x-text="tampil(r,c)"></span></template>
+                      </td>
+                    </template>
+                  </tr>
+                </template>
+                <tr x-show="!vKeluar.rows.length"><td :colspan="colsKeluar.length+1" class="empty">Tidak ada data yang cocok</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="pager">
+            <div>Menampilkan <b x-text="vKeluar.rows.length?vKeluar.start+1:0"></b>–<b x-text="vKeluar.start+vKeluar.pageRows.length"></b> dari <b x-text="vKeluar.rows.length"></b> data</div>
+            <div class="btns">
+              <select x-model.number="t.keluar.per" @change="t.keluar.page=1"><option>25</option><option>50</option><option>100</option><option value="100000">Semua</option></select>
+              <button :disabled="t.keluar.page<=1" @click="t.keluar.page--">‹ Prev</button>
+              <span x-text="t.keluar.page+' / '+vKeluar.pages"></span>
+              <button :disabled="t.keluar.page>=vKeluar.pages" @click="t.keluar.page++">Next ›</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ======== 4. REKAP ABSEN ======== -->
+      <section x-show="page==='absen'">
+        <div class="state" x-show="absenLoading && !absenReady && !absenError"><div class="loader"></div><b>Mengambil data absen…</b></div>
+
+        <div class="state err" x-show="absenError" x-cloak>
+          <b style="font-size:16px"><i class="ti ti-alert-triangle" style="color:#ef4444;vertical-align:-2px"></i> Data absen gagal dimuat</b>
+          <p style="margin-top:6px" x-text="absenError"></p>
+          <ul>
+            <li>Pastikan <code>Code.gs</code> versi terbaru sudah dipasang dan di-deploy sebagai <b>versi baru</b> (Deploy → Kelola deployment → Edit → Versi baru).</li>
+            <li>Pastikan <code>ABSEN_SPREADSHEET_ID</code> di <code>Code.gs</code> sudah diisi dan akun Anda punya akses ke spreadsheet absen.</li>
+            <li>Nama sheet harus <code>Data Ganjil</code> dan/atau <code>Data Genap</code>, dengan header di baris 1.</li>
+          </ul>
         </div>
 
-        <!-- Modal Edit -->
-        <div class="modal fade" id="editModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Edit Data Siswa</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="editForm">
-                            <div id="editFields" class="form-group"></div>
-                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                        </form>
-                    </div>
-                </div>
+        <div x-show="absenReady">
+          <div class="warn" x-show="absenWarn" x-text="absenWarn"></div>
+          <div class="toolbar">
+            <select x-model="semester" @change="hitungAbsen()">
+              <option value="Ganjil">Semester Ganjil</option>
+              <option value="Genap">Semester Genap</option>
+              <option value="Setahun">Setahun (Ganjil + Genap)</option>
+            </select>
+            <span style="color:var(--muted);font-size:13px" x-text="'Ganjil: '+absenRaw.ganjil.length+' siswa · Genap: '+absenRaw.genap.length+' siswa'"></span>
+          </div>
+
+          <div class="cards">
+            <div class="stat" style="--c:#4f46e5"><i class="ti ti-users stat-ico"></i><div class="lbl">Jumlah Siswa</div><div class="num" x-text="fmtNum(absenSum.siswa)"></div></div>
+            <div class="stat" style="--c:#10b981"><i class="ti ti-circle-check stat-ico"></i><div class="lbl">Hadir (H)</div><div class="num" x-text="fmtNum(absenSum.H)"></div></div>
+            <div class="stat" style="--c:#f59e0b"><i class="ti ti-first-aid-kit stat-ico"></i><div class="lbl">Sakit (S)</div><div class="num" x-text="fmtNum(absenSum.S)"></div></div>
+            <div class="stat" style="--c:#3b82f6"><i class="ti ti-mail stat-ico"></i><div class="lbl">Izin (I)</div><div class="num" x-text="fmtNum(absenSum.I)"></div></div>
+            <div class="stat" style="--c:#ef4444"><i class="ti ti-user-x stat-ico"></i><div class="lbl">Alpa (A)</div><div class="num" x-text="fmtNum(absenSum.A)"></div></div>
+            <div class="stat" style="--c:#7c3aed"><i class="ti ti-percentage stat-ico"></i><div class="lbl">Rata-rata Kehadiran</div><div class="num" x-text="absenSum.rata==null?'-':fmtPct(absenSum.rata)"></div></div>
+          </div>
+
+          <div class="panel" style="margin-bottom:18px">
+            <h3><i class="ti ti-school"></i> Rekap per Kelas <span class="tag" x-text="{Ganjil:'Semester Ganjil',Genap:'Semester Genap',Setahun:'Setahun'}[semester]"></span></h3>
+            <div class="scroll"><table>
+              <thead><tr><th>Kelas</th><th class="n">Siswa</th><th class="n">H</th><th class="n">S</th><th class="n">I</th><th class="n">A</th><th>Rata-rata Kehadiran</th></tr></thead>
+              <tbody>
+                <template x-for="r in absenKelasRekap" :key="r.kelas">
+                  <tr>
+                    <td x-text="r.kelas"></td>
+                    <td class="n" x-text="r.siswa"></td>
+                    <td class="n" x-text="fmtNum(r.H)"></td>
+                    <td class="n" :class="{zero:!r.S}" x-text="fmtNum(r.S)"></td>
+                    <td class="n" :class="{zero:!r.I}" x-text="fmtNum(r.I)"></td>
+                    <td class="n" :class="{zero:!r.A}" x-text="fmtNum(r.A)"></td>
+                    <td><div class="pctcell"><div class="bar"><i :style="'width:'+Math.max(0,r.rata==null?0:r.rata)+'%;background:'+pctColor(r.rata==null?-1:r.rata)"></i></div><b x-text="r.rata==null?'-':fmtPct(r.rata)"></b></div></td>
+                  </tr>
+                </template>
+                <tr x-show="!absenKelasRekap.length"><td colspan="7" class="empty">Belum ada data absen</td></tr>
+              </tbody>
+              <tfoot><tr>
+                <td>Total</td><td class="n" x-text="absenSum.siswa"></td>
+                <td class="n" x-text="fmtNum(absenSum.H)"></td><td class="n" x-text="fmtNum(absenSum.S)"></td>
+                <td class="n" x-text="fmtNum(absenSum.I)"></td><td class="n" x-text="fmtNum(absenSum.A)"></td>
+                <td x-text="absenSum.rata==null?'-':fmtPct(absenSum.rata)"></td>
+              </tr></tfoot>
+            </table></div>
+          </div>
+
+          <div class="panel">
+            <h3><i class="ti ti-list-details"></i> Rekap Absen per Siswa</h3>
+            <div class="toolbar">
+              <div class="search grow"><i class="ti ti-search"></i><input type="text" placeholder="Cari nama siswa…" x-model.debounce.200ms="t.absen.q" @input="t.absen.page=1"></div>
+              <select x-model="t.absen.filter" @change="t.absen.page=1">
+                <option value="">Semua Kelas</option>
+                <template x-for="k in absenKelas" :key="k"><option :value="k" x-text="k"></option></template>
+              </select>
+              <button class="btn btn-green" @click="exportXlsx('absen')"><i class="ti ti-file-spreadsheet"></i> Download XLSX</button>
             </div>
-        </div>
-
-        <!-- Modal Konfirmasi Hapus -->
-        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Hapus Data</h5>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Yakin ingin menghapus data ini?</p>
-                        <button id="confirmDeleteBtn" class="btn btn-danger">Ya, Hapus</button>
-                    </div>
-                </div>
+            <div class="scroll" style="max-height:68vh">
+              <table>
+                <thead><tr>
+                  <th class="n">No</th>
+                  <template x-for="c in colsAbsen" :key="c.k">
+                    <th class="sortable" :class="{n:['H','S','I','A','%','Efektif'].includes(c.k)}" @click="sortBy('absen',c)"><span x-text="c.k==='Efektif'?'Efektif':c.k"></span><span class="arrow" :class="{on:t.absen.sort===c.k}" x-text="t.absen.sort===c.k?(t.absen.dir>0?'▲':'▼'):'↕'"></span></th>
+                  </template>
+                </tr></thead>
+                <tbody>
+                  <template x-for="(r,i) in vAbsen.pageRows" :key="r._id">
+                    <tr><td class="n" x-text="vAbsen.start+i+1"></td>
+                      <template x-for="c in colsAbsen" :key="c.k">
+                        <td :class="{n:['H','S','I','A','%','Efektif'].includes(c.k)}">
+                          <template x-if="c.k==='%'"><span class="pill" :style="'background:'+pctColor(r.Persen)" x-text="r.Persen>=0?fmtPct(r.Persen):'-'"></span></template>
+                          <template x-if="c.k!=='%'"><span :class="{zero:['S','I','A'].includes(c.k)&&!r[c.f||c.k]}" x-text="r[c.f||c.k]"></span></template>
+                        </td>
+                      </template>
+                    </tr>
+                  </template>
+                  <tr x-show="!vAbsen.rows.length"><td :colspan="colsAbsen.length+1" class="empty">Tidak ada data yang cocok</td></tr>
+                </tbody>
+              </table>
             </div>
+            <div class="pager">
+              <div>Menampilkan <b x-text="vAbsen.rows.length?vAbsen.start+1:0"></b>–<b x-text="vAbsen.start+vAbsen.pageRows.length"></b> dari <b x-text="vAbsen.rows.length"></b> siswa</div>
+              <div class="btns">
+                <select x-model.number="t.absen.per" @change="t.absen.page=1"><option>25</option><option>50</option><option>100</option><option value="100000">Semua</option></select>
+                <button :disabled="t.absen.page<=1" @click="t.absen.page--">‹ Prev</button>
+                <span x-text="t.absen.page+' / '+vAbsen.pages"></span>
+                <button :disabled="t.absen.page>=vAbsen.pages" @click="t.absen.page++">Next ›</button>
+              </div>
+            </div>
+          </div>
         </div>
+      </section>
 
+    </div>
+    </template>
+  </main>
+</div>
 
-        <!-- Tambahkan ini di bawah sebelum tag </body> -->
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-        <!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-        <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
-        <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
+<script>
+/* ================= KONFIGURASI ================= */
+const CONFIG = {
+  NAMA_SEKOLAH   : 'SD Negeri 01 Toto Rejo',
+  // URL Web App Apps Script (hasil Deploy, berakhiran /exec)
+  API_URL        : 'https://script.google.com/macros/s/AKfycbyo6JkbRplmXvUe3HAA1HgY1s9oKmRnRj6xmKv6RdAZ-DEqpl5u8py4TGd4DY-8BaUS/exec',
+  SHEET_NAME     : 'APPDATA',
+  TAMPILKAN_NIK  : false   // NIK sensitif; ubah ke true jika ingin ditampilkan di tabel & XLSX
+};
 
-        <script>
+/* ================= HELPER ================= */
+const BULAN = {jan:0,januari:0,feb:1,februari:1,mar:2,maret:2,apr:3,april:3,mei:4,jun:5,juni:5,jul:6,juli:6,agu:7,agt:7,agustus:7,sep:8,sept:8,september:8,okt:9,oktober:9,nov:10,november:10,des:11,desember:11};
+const BULAN_PENDEK = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const STATUS = [
+  {name:'Aktif', color:'#10b981'}, {name:'Pindah', color:'#f59e0b'}, {name:'Keluar', color:'#ef4444'},
+  {name:'Lulus', color:'#3b82f6'}, {name:'Tidak Aktif', color:'#64748b'}
+];
+const ROMAWI = {I:1,II:2,III:3,IV:4,V:5,VI:6};
+// Status di luar 5 status baku (mis. Meninggal) tampil dengan namanya sendiri
+const WARNA_LAIN = {'Meninggal':'#7e22ce','Tanpa Status':'#94a3b8'};
+const IKON = {'Aktif':'ti-user-check','Pindah':'ti-arrows-exchange','Keluar':'ti-door-exit','Lulus':'ti-school','Tidak Aktif':'ti-user-off','Meninggal':'ti-flower','Tanpa Status':'ti-help-circle'};
 
-            document.getElementById("btnTambah").addEventListener("click", function () {
-                // Reset form sebelum digunakan
-                document.getElementById("dataForm").reset();
-                // Ubah judul modal
-                document.getElementById("formModalLabel").textContent = "Tambah Data";
-                // Tampilkan modal
-                $('#formModal').modal('show');
-            });
+function mkDate(y,m,d){ const x=new Date(y,m,d); return (x.getFullYear()===y && x.getMonth()===m && x.getDate()===d)?x:null; }
+function parseTanggal(v){
+  if(v==null) return null; const s=String(v).trim(); if(!s) return null; let m;
+  if(m=s.match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})/)) return mkDate(+m[1],+m[2]-1,+m[3]);
+  if(m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/)) return mkDate(+m[3],+m[2]-1,+m[1]);
+  if(m=s.match(/^(\d{1,2})\s+([A-Za-z]+)\.?\s+(\d{4})/)){ const b=BULAN[m[2].toLowerCase()]; if(b!==undefined) return mkDate(+m[3],b,+m[1]); }
+  if(/^\d{5}$/.test(s)){ const u=new Date(Math.round((+s-25569)*864e5)); return mkDate(u.getUTCFullYear(),u.getUTCMonth(),u.getUTCDate()); }
+  return null;
+}
+function fmtTgl(d){ return d ? String(d.getDate()).padStart(2,'0')+' '+BULAN_PENDEK[d.getMonth()]+' '+d.getFullYear() : ''; }
+function tingkatDari(rombel){
+  const r=String(rombel||'').trim().toUpperCase(); if(!r) return null;
+  let m=r.match(/\d+/); if(m){ const n=+m[0]; return (n>=1&&n<=12)?n:null; }
+  m=r.match(/^(?:KELAS\s*)?(VI|V|IV|III|II|I)/); return m?ROMAWI[m[1]]:null;
+}
+function hitungUsia(lahir,ref){
+  if(!lahir) return null;
+  let u=ref.getFullYear()-lahir.getFullYear();
+  const md=(ref.getMonth()-lahir.getMonth()) || (ref.getDate()-lahir.getDate());
+  if(md<0) u--; return u;
+}
+function normJK(v){ const s=String(v||'').trim().toUpperCase(); if(!s) return ''; if(s[0]==='L') return 'L'; if(s[0]==='P') return 'P'; return s; }
+function titleCase(s){ return String(s||'').trim().toLowerCase().replace(/\b\p{L}/gu,c=>c.toUpperCase()); }
+function normStatus(v){
+  const s=String(v||'').trim().toLowerCase().replace(/\s+/g,' ');
+  const f=STATUS.find(x=>x.name.toLowerCase()===s); return f?f.name:(s?titleCase(s):'');
+}
+function parseCSV(text){
+  const rows=[]; let row=[],cur='',q=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];
+    if(q){ if(c==='"'){ if(text[i+1]==='"'){cur+='"';i++;} else q=false; } else cur+=c; }
+    else if(c==='"') q=true;
+    else if(c===','){ row.push(cur); cur=''; }
+    else if(c==='\n'||c==='\r'){ if(c==='\r'&&text[i+1]==='\n') i++; row.push(cur); rows.push(row); row=[]; cur=''; }
+    else cur+=c;
+  }
+  if(cur!==''||row.length){ row.push(cur); rows.push(row); }
+  return rows;
+}
+const cmp=(a,b)=>{
+  if(typeof a==='number'&&typeof b==='number') return a-b;
+  return String(a).localeCompare(String(b),'id',{numeric:true,sensitivity:'base'});
+};
 
-            document.getElementById('cancelBtn').addEventListener('click', () => {
-                document.getElementById('loginBox').style.display = 'none';
-            });
+function toNum(v){
+  let s=String(v==null?'':v).replace('%','').trim(); if(!s) return 0;
+  if(s.includes(',')&&!s.includes('.')) s=s.replace(',','.'); else s=s.replace(/,/g,'');
+  const n=parseFloat(s); return isNaN(n)?0:n;
+}
+const normH=h=>String(h==null?'':h).toLowerCase().replace(/[^a-z0-9%]/g,'');
 
-            const allowedUsers = [
-                { username: "admin", password: "12345" },
-                { username: "guru", password: "totorejo" }
-            ];
+/* ================= APLIKASI ================= */
+function app(){
+  const kolom = (arr)=>arr.map(k=>typeof k==='string'?{k}:k);
+  const dateCol = (k,f)=>({k,date:f});
+  const nikCol = CONFIG.TAMPILKAN_NIK ? [{k:'NIK'}] : [];
+  return {
+    cfg: CONFIG,
+    page: 'dashboard',
+    loading:false, loaded:false, error:'', updatedAt:'',
+    students:[], refDate:'',
+    cnt:{aktif:0},
+    statusList:[], pvJK:{rows:[],totals:[],grand:0}, pvAgama:{cols:[],rows:[],totals:[],grand:0}, pvUsia:{cols:[],rows:[],totals:[],grand:0},
+    kelasList:[], ketList:[], keluarRows:[],
+    absenRaw:{ganjil:[],genap:[]}, absenRows:[], absenReady:false, absenLoading:false, absenError:'', absenWarn:'',
+    semester:'Genap', absenSum:{siswa:0,H:0,S:0,I:0,A:0,rata:null}, absenKelas:[], absenKelasRekap:[],
+    t:{ aktif:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, keluar:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, absen:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25} },
 
-            // Sembunyikan tombol tambah siswa
-            function protectCRUD() {
-                document.querySelectorAll('.crud-only').forEach(el => {
-                    el.style.display = 'none'; // atau el.disabled = true;
-                });
-            }
+    colsAktif: kolom(['Nama','Rombel','JK','NIPD','NISN','Tempat Lahir',dateCol('Tanggal Lahir','_lahir'),...nikCol,'Agama','Nama Ayah','Nama Ibu',dateCol('Tgl Masuk','_masuk')]),
+    colsKeluar: kolom(['Nama','Rombel','JK','NIPD','NISN','Ket',dateCol('Tgl Masuk','_masuk'),dateCol('Tgl Keluar','_keluar')]),
 
-            // Tampilkan tombol Tambah siswa
-            function enableCRUD() {
-                document.querySelectorAll('.crud-only').forEach(el => {
-                    el.style.display = ''; // atau el.disabled = false;
-                });
-            }
+    colsAbsen: kolom(['Nama','Kelas','NIS','NISN','H','S','I','A',{k:'%',f:'Persen'},{k:'Efektif',f:'Efektif'}]),
 
-            function showLogin() {
-                document.getElementById('loginBox').style.display = 'flex';
-            }
+    todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); },
+    go(p){ this.page=p; window.scrollTo({top:0,behavior:'smooth'}); },
 
-            function updateAuthUI(isLoggedIn) {
-                $('.auth-toggle').each(function () {
-                    if (isLoggedIn) {
-                        $(this).html('<i class="fas fa-sign-out-alt mr-1"></i> Logout');
-                        this.onclick = handleLogout;
-                    } else {
-                        $(this).html('<i class="fas fa-sign-in-alt mr-1"></i> Login');
-                        this.onclick = showLogin;
-                    }
-                });
-            }
+    async init(){ this.refDate=this.todayISO(); await this.load(); },   // dimuat sekali saat halaman dibuka
 
-            let isLoggedIn = false;
-            document.getElementById('loginBtn').addEventListener('click', () => {
-                const user = document.getElementById('username').value;
-                const pass = document.getElementById('password').value;
+    async load(){
+      if(this.loading) return;
+      this.loading=true; this.error='';
+      try{
+        if(!CONFIG.API_URL || CONFIG.API_URL.startsWith('GANTI')) throw new Error('API_URL (URL Web App Apps Script) belum diisi.');
+        const pAbsen=this.loadAbsen();   // data absen dimuat bersamaan, kegagalannya tidak mengganggu data siswa
+        const res=await fetch(CONFIG.API_URL+(CONFIG.API_URL.includes('?')?'&':'?')+'_='+Date.now());
+        if(!res.ok) throw new Error('Server menjawab status '+res.status+'.');
+        const txt=await res.text();
+        let js; try{ js=JSON.parse(txt); }catch(_){ throw new Error('Respons bukan JSON. Pastikan Web App di-deploy dengan akses "Siapa saja" dan URL berakhiran /exec.'); }
+        if(!js.ok) throw new Error(js.error||'Apps Script mengembalikan error.');
+        const rows=[js.headers, ...js.data.map(o=>js.headers.map(h=>o[h]))];
+        this.students=this.olah(rows);
+        this.loaded=true;
+        this.updatedAt=new Date().toLocaleString('id-ID',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'});
+        this.hitung();
+        await pAbsen;
+      }catch(e){
+        this.error=(e&&e.message)||String(e);
+        if(!this.loaded) this.students=[];
+      }finally{ this.loading=false; }
+    },
 
-                const match = allowedUsers.find(u => u.username === user && u.password === pass);
-                if (match) {
-                    // Ubah tombol login jadi logout
-                    isLoggedIn = true;
-                    authLink.onclick = Logout;
-                    document.getElementById('loginBox').style.display = 'none';
-                    document.getElementById('loginError').style.display = 'none';
-                    enableCRUD();
-                    renderTable(true); // Tampilkan ulang tabel dengan kolom aksi
-                    updateAuthUI(true);
-                } else {
-                    document.getElementById('loginError').style.display = 'block';
-                }
-            });
+    /* ---- REKAP ABSEN (spreadsheet terpisah, lewat ?data=absen) ---- */
+    async loadAbsen(){
+      this.absenLoading=true; this.absenError='';
+      try{
+        const url=CONFIG.API_URL+(CONFIG.API_URL.includes('?')?'&':'?')+'data=absen&_='+Date.now();
+        const res=await fetch(url);
+        if(!res.ok) throw new Error('Server menjawab status '+res.status+'.');
+        let js; try{ js=JSON.parse(await res.text()); }catch(_){ throw new Error('Respons absen bukan JSON.'); }
+        if(!js.ok) throw new Error(js.error||'Apps Script mengembalikan error.');
+        if(!('ganjil' in js) && !('genap' in js)) throw new Error('Apps Script belum diperbarui (belum mendukung data absen). Pasang Code.gs terbaru dan deploy sebagai versi baru.');
+        this.absenRaw={ganjil:this.olahAbsen(js.ganjil), genap:this.olahAbsen(js.genap)};
+        this.absenWarn=[js.ganjil?'':'Sheet "Data Ganjil" tidak ditemukan.', js.genap?'':'Sheet "Data Genap" tidak ditemukan.'].filter(Boolean).join(' ');
+        if(!this.absenReady) this.semester=this.absenRaw.genap.length?'Genap':(this.absenRaw.ganjil.length?'Ganjil':'Genap');
+        this.absenReady=true;
+        this.hitungAbsen();
+      }catch(e){
+        this.absenError=(e&&e.message)||String(e);
+      }finally{ this.absenLoading=false; }
+    },
 
-            function Logout() {
-                isLoggedIn = false;
-                // document.getElementById('loginBox').style.display = 'block';
-                protectCRUD();
-                renderTable(false); // sembunyikan kolom aksi
+    /* header dipetakan berdasarkan nama (tidak peka huruf besar/kecil & spasi) */
+    olahAbsen(sh){
+      if(!sh||!sh.data) return [];
+      const map={}; (sh.headers||[]).forEach(h=>{ map[normH(h)]=h; });
+      const pick=(o,...ns)=>{ for(const n of ns){ if(map[n]!==undefined) return o[map[n]]; } return ''; };
+      const txt=(o,...ns)=>String(pick(o,...ns)==null?'':pick(o,...ns)).trim();
+      const out=[]; let id=0;
+      sh.data.forEach(o=>{
+        const nama=txt(o,'nama'); if(!nama) return;
+        const H=toNum(pick(o,'h')), S=toNum(pick(o,'s')), I=toNum(pick(o,'i')), A=toNum(pick(o,'a'));
+        const ef=toNum(pick(o,'efektifsiswa','efektif'));
+        const pr=txt(o,'%','persen'); let p=-1;
+        if(pr!==''){ const n=toNum(pr); p=pr.includes('%')?n:(n<=1?n*100:n); }
+        else if(ef>0) p=H/ef*100;
+        out.push({_id:++id, Nama:nama, Kelas:txt(o,'kelas'), NIS:txt(o,'nis'), NISN:txt(o,'nisn'), H, S, I, A,
+          Persen:p>=0?Math.round(p*100)/100:-1, Efektif:ef});
+      });
+      return out;
+    },
 
-                updateAuthUI(false);
-            }
+    hitungAbsen(){
+      const R=this.absenRaw; let rows;
+      if(this.semester==='Setahun'){
+        // Gabung per siswa: baris Genap dipasangkan dengan baris Ganjil milik siswa yang sama.
+        // Kunci pasangan: NISN valid (>=8 digit), jika tidak ada -> nama + kelas. Satu baris hanya dipasangkan satu kali.
+        const nm=r=>r.Nama.toLowerCase().replace(/\s+/g,' ').trim();
+        const keys=r=>{
+          const k=[], n=String(r.NISN||'').replace(/\D/g,'');
+          if(n.length>=8) k.push('nisn:'+n);
+          k.push('nama:'+nm(r)+'|'+String(r.Kelas||'').toLowerCase().trim());
+          return k;
+        };
+        const out=R.ganjil.map(r=>({...r}));
+        const idx=new Map();
+        out.forEach((r,i)=>keys(r).forEach(k=>{ if(!idx.has(k)) idx.set(k,[]); idx.get(k).push(i); }));
+        const used=new Set();
+        R.genap.forEach(g=>{
+          let hit=-1;
+          for(const k of keys(g)){ const j=(idx.get(k)||[]).find(i=>!used.has(i)); if(j!==undefined){ hit=j; break; } }
+          if(hit>=0){
+            used.add(hit); const e=out[hit];
+            e.H+=g.H; e.S+=g.S; e.I+=g.I; e.A+=g.A; e.Efektif+=g.Efektif; e.Kelas=g.Kelas||e.Kelas;
+          } else out.push({...g});
+        });
+        rows=out.map((r,i)=>({...r,_id:i+1,Persen:r.Efektif>0?Math.round(r.H/r.Efektif*10000)/100:-1}));
+      } else rows=R[this.semester.toLowerCase()]||[];
+      this.absenRows=rows;
 
-            let originalData = [];
-            let headers = [];
-            let rombelIndex = -1;
-            let tanggalIndexes = [];
-            let table = null;
+      const tot=(list,k)=>list.reduce((a,r)=>a+r[k],0);
+      const rata=list=>{ const v=list.filter(r=>r.Persen>=0); return v.length?v.reduce((a,r)=>a+r.Persen,0)/v.length:null; };
+      this.absenSum={siswa:rows.length,H:tot(rows,'H'),S:tot(rows,'S'),I:tot(rows,'I'),A:tot(rows,'A'),rata:rata(rows)};
+      this.absenKelas=[...new Set(rows.map(r=>r.Kelas).filter(Boolean))].sort(cmp);
+      const ks=[...new Set(rows.map(r=>r.Kelas||'-'))].sort(cmp);
+      this.absenKelasRekap=ks.map(k=>{
+        const g=rows.filter(r=>(r.Kelas||'-')===k);
+        return {kelas:k,siswa:g.length,H:tot(g,'H'),S:tot(g,'S'),I:tot(g,'I'),A:tot(g,'A'),rata:rata(g)};
+      });
+      this.t.absen.page=1;
+      if(this.t.absen.filter && !this.absenKelas.includes(this.t.absen.filter)) this.t.absen.filter='';
+    },
+    fmtNum(n){ return Number(n||0).toLocaleString('id-ID'); },
+    fmtPct(p){ return (Math.round(p*10)/10).toString().replace('.',',')+'%'; },
+    pctColor(p){ return p<0?'#94a3b8':(p>=95?'#10b981':(p>=85?'#f59e0b':'#ef4444')); },
 
-            function renderTable(login = false) {
-                if (table) {
-                    table.destroy();
-                    $('#dataTable').empty(); // Hapus header/isi lama
-                }
+    /* ambil data berdasarkan NAMA HEADER (bukan urutan kolom) */
+    olah(rows){
+      if(!rows.length) return [];
+      const head=rows[0].map(h=>String(h||'').trim());
+      const idx={}; head.forEach((h,i)=>{ if(h) idx[h.toLowerCase()]=i; });   // kolom tanpa header diabaikan
+      const get=(r,name)=>{ const i=idx[name.toLowerCase()]; return i===undefined?'':String(r[i]??'').trim(); };
+      const out=[]; let id=0;
+      for(const r of rows.slice(1)){
+        const nama=get(r,'Nama'); if(!nama) continue;
+        const o={_id:++id, Nama:nama, Rombel:get(r,'Rombel'), JK:normJK(get(r,'JK')), NIPD:get(r,'NIPD'), NISN:get(r,'NISN'),
+          Ket:normStatus(get(r,'Ket')), 'Tempat Lahir':get(r,'Tempat Lahir'), 'Tanggal Lahir':get(r,'Tanggal Lahir'),
+          NIK:get(r,'NIK'), Agama:titleCase(get(r,'Agama')), 'Nama Ayah':get(r,'Nama Ayah'), 'Nama Ibu':get(r,'Nama Ibu'),
+          'Tgl Masuk':get(r,'Tgl Masuk'), 'Tgl Keluar':get(r,'Tgl Keluar')};
+        o._lahir=parseTanggal(o['Tanggal Lahir']); o._masuk=parseTanggal(o['Tgl Masuk']); o._keluar=parseTanggal(o['Tgl Keluar']);
+        o.tingkat=tingkatDari(o.Rombel);
+        out.push(o);
+      }
+      return out;
+    },
 
-                let columns = headers.map(title => ({ title }));
+    hitung(){
+      const S=this.students, ref=parseTanggal(this.refDate)||new Date();
+      // ringkasan status
+      const sl=STATUS.map(s=>({...s,icon:IKON[s.name],count:S.filter(x=>x.Ket===s.name).length}));
+      const extra={};
+      S.forEach(x=>{ if(!STATUS.some(s=>s.name===x.Ket)){ const k=x.Ket||'Tanpa Status'; extra[k]=(extra[k]||0)+1; } });
+      Object.keys(extra).sort(cmp).forEach(k=>sl.push({name:k,color:this.warna(k),icon:IKON[k]||'ti-user-question',count:extra[k]}));
+      this.statusList=sl;
+      const aktif=S.filter(x=>x.Ket==='Aktif'); this.cnt.aktif=aktif.length;
+      this.keluarRows=S.filter(x=>x.Ket!=='Aktif');
+      this.kelasList=[...new Set(aktif.map(x=>x.Rombel).filter(Boolean))].sort(cmp);
+      this.ketList=[...new Set(this.keluarRows.map(x=>x.Ket||'(Kosong)'))].sort(cmp);
 
-                if (login) {
-                    columns.push({ title: "Aksi", orderable: false });
-                }
+      // pivot
+      const label=t=>t==null?'-':'Kelas '+t;
+      const pivot=(keyFn,colSort)=>{
+        const cols=[...new Set(aktif.map(keyFn))].sort(colSort);
+        const tks=[...new Set(aktif.map(x=>x.tingkat))].sort((a,b)=>(a??99)-(b??99));
+        const rows=tks.map(t=>{
+          const grp=aktif.filter(x=>x.tingkat===t);
+          const cells=cols.map(c=>grp.filter(x=>keyFn(x)===c).length);
+          return {label:label(t),cells,total:grp.length};
+        });
+        const totals=cols.map((c,i)=>rows.reduce((a,r)=>a+r.cells[i],0));
+        return {cols,rows,totals,grand:aktif.length};
+      };
+      const jk=pivot(x=>x.JK||'?',(a,b)=>a==='L'?-1:b==='L'?1:a==='P'?-1:b==='P'?1:cmp(a,b));
+      this.pvJK={rows:jk.rows,totals:jk.totals,grand:jk.grand,cols:jk.cols};
+      // pastikan kolom L dan P selalu ada
+      if(!(jk.cols.length===2&&jk.cols[0]==='L'&&jk.cols[1]==='P')){
+        const mk=(g)=>['L','P'].map(k=>g.filter(x=>x.JK===k).length);
+        const tks=[...new Set(aktif.map(x=>x.tingkat))].sort((a,b)=>(a??99)-(b??99));
+        const rows=tks.map(t=>{const g=aktif.filter(x=>x.tingkat===t);return {label:label(t),cells:mk(g),total:g.length};});
+        this.pvJK={rows,totals:mk(aktif),grand:aktif.length};
+      }
+      this.pvAgama=pivot(x=>x.Agama||'Tidak diisi',cmp);
+      const usiaStr=x=>{const u=hitungUsia(x._lahir,ref);return u==null?'?':String(u);};
+      this.pvUsia=pivot(usiaStr,(a,b)=>a==='?'?1:b==='?'?-1:(+a)-(+b));
+      // reset halaman tabel
+      this.t.aktif.page=1; this.t.keluar.page=1;
+      if(this.t.aktif.filter && !this.kelasList.includes(this.t.aktif.filter)) this.t.aktif.filter='';
+      if(this.t.keluar.filter && !this.ketList.includes(this.t.keluar.filter)) this.t.keluar.filter='';
+    },
 
-                const rows = originalData.map((row, i) => {
-                    const formattedRow = row.map((val, idx) =>
-                        tanggalIndexes.includes(idx) ? formatDate(val) : val
-                    );
-                    if (login) {
-                        formattedRow.push(`
-                            <button class="btn btn-sm btn-warning edit-btn" data-index="${i}">Edit</button>
-                            <button class="btn btn-sm btn-danger ml-1 delete-btn" data-index="${i}">Hapus</button>
-                        `);
-                    }
-                    return formattedRow;
-                });
+    /* ---- tabel ---- */
+    tampil(r,c){ return c.date ? (fmtTgl(r[c.date])||r[c.k]||'') : (r[c.k]||''); },
+    warna(k){ const s=STATUS.find(x=>x.name===k); return s?s.color:(WARNA_LAIN[k]||'#a855f7'); },
+    sortBy(name,c){
+      const st=this.t[name];
+      if(st.sort===c.k) st.dir*=-1; else { st.sort=c.k; st.dir=1; }
+      st.page=1;
+    },
+    olahTabel(name,rows,cols,filterFn){
+      const st=this.t[name], q=st.q.trim().toLowerCase();
+      let data=rows.filter(r=>(!q||r.Nama.toLowerCase().includes(q)) && filterFn(r,st.filter));
+      const col=cols.find(c=>c.k===st.sort)||cols[0];
+      const val=r=>col.date ? (r[col.date]?r[col.date].getTime():-Infinity) : (r[col.f||col.k]??'');
+      data=[...data].sort((a,b)=>cmp(val(a),val(b))*st.dir);
+      const pages=Math.max(1,Math.ceil(data.length/st.per));
+      if(st.page>pages) st.page=pages;
+      const start=(st.page-1)*st.per;
+      return {rows:data,pages,start,pageRows:data.slice(start,start+st.per)};
+    },
+    get vAktif(){ return this.olahTabel('aktif',this.students.filter(x=>x.Ket==='Aktif'),this.colsAktif,(r,f)=>!f||r.Rombel===f); },
+    get vKeluar(){ return this.olahTabel('keluar',this.keluarRows,this.colsKeluar,(r,f)=>!f||(r.Ket||'(Kosong)')===f); },
 
-                table = $('#dataTable').DataTable({
-                    lengthChange: true,
-                    pageLength: 40,
-                    lengthMenu: [ [50, 100, 150, 200, 250, 300, -1], [50, 100, 150, 200, 250, 300, "Semua"] ],
-                    data: rows,
-                    columns: columns,
-                    responsive: true,
-                    paging: true,
-                    searching: true,
-                    dom: '<"row mb-3"<"col-md-6"B>>' +
-                        '<"row mb-2"<"col-md-6 small"l><"col-md-6 text-end"f>>' +
-                        'rt' +
-                        '<"row mt-2"<"col-md-6"i><"col-md-6 text-end"p>>',
-                    // dom: 'Bfrtilp',
-                    buttons: ['excelHtml5', 'csvHtml5', 'pdfHtml5', 'print']
-                });
+    get vAbsen(){ return this.olahTabel('absen',this.absenRows,this.colsAbsen,(r,f)=>!f||r.Kelas===f); },
 
-                $('#rombelSelect').off('change').on('change', function () {
-                    const selected = $(this).val();
-                    if (selected) {
-                        table.column(rombelIndex).search('^' + selected + '$', true, false).draw();
-                    } else {
-                        table.column(rombelIndex).search('').draw();
-                    }
-                });
+    exportAbsen(){
+      const data=this.vAbsen.rows.map((r,i)=>({No:i+1,Nama:r.Nama,Kelas:r.Kelas,NIS:r.NIS,NISN:r.NISN,H:r.H,S:r.S,I:r.I,A:r.A,'%':r.Persen>=0?r.Persen:'',EfektifSiswa:r.Efektif}));
+      const ws=XLSX.utils.json_to_sheet(data);
+      ws['!cols']=Object.keys(data[0]||{No:1}).map(k=>({wch:Math.max(k.length,...data.map(d=>String(d[k]??'').length))+2}));
+      const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Rekap Absen');
+      const f=this.t.absen.filter;
+      XLSX.writeFile(wb,`Rekap-Absen-${this.semester}${f?'-Kelas-'+f:''}-SDN01-TotoRejo-${this.todayISO()}.xlsx`);
+    },
 
-                $('#dataTable').on('click', '.edit-btn', function () {
-                    const index = $(this).data('index');
-                    openEditModal(index);
-                });
-
-                $('#dataTable').on('click', '.delete-btn', function () {
-                    const index = $(this).data('index');
-                    openDeleteModal(index);
-                });
-
-                $('#loading').hide();
-                $('#dataSection').fadeIn(500);
-
-            }
-
-            let currentEditIndex = null;
-            function openEditModal(index) {
-                currentEditIndex = index;
-                const row = originalData[index];
-                let formHtml = '';
-                headers.forEach((header, i) => {
-                    const value = row[i] || '';
-                    formHtml += `
-                        <label>${header}</label>
-                        <input type="text" class="form-control mb-2" name="field${i}" value="${value}">
-                    `;
-                });
-                $('#editFields').html(formHtml);
-                $('#editModal').modal('show');
-            }
-
-            let currentDeleteIndex = null;
-            function openDeleteModal(index) {
-                currentDeleteIndex = index;
-                $('#deleteModal').modal('show');
-            }
-
-            $('#editForm').on('submit', function (e) {
-                e.preventDefault();
-                const inputs = $('#editForm').serializeArray();
-                const updatedRow = inputs.map(input => input.value);
-                originalData[currentEditIndex] = updatedRow;
-                $('#editModal').modal('hide');
-                renderTable(isLoggedIn);
-                alert('Data berhasil diperbarui (simulasi).');
-            });
-
-            $('#confirmDeleteBtn').on('click', function () {
-                originalData.splice(currentDeleteIndex, 1);
-                $('#deleteModal').modal('hide');
-                renderTable(isLoggedIn);
-                alert('Data berhasil dihapus (simulasi).');
-            });
-
-
-            function formatDate(isoDate) {
-                const d = new Date(isoDate);
-                if (isNaN(d)) return isoDate;
-                return d.toLocaleDateString('id-ID', {
-                    day: '2-digit', month: '2-digit', year: 'numeric'
-                });
-            }
-
-            let isDarkMode = false;
-
-            $('.dark-mode-toggle').on('click', function (e) {
-                e.preventDefault(); // biar gak reload
-
-                // Toggle mode
-                $('body').toggleClass('dark-mode');
-                $('nav').toggleClass('navbar-dark');
-                isDarkMode = !isDarkMode;
-
-                // Update semua icon dark mode
-                $('.dark-mode-toggle i').each(function () {
-                    $(this).removeClass('fa-moon fa-sun');
-                    $(this).addClass(isDarkMode ? 'fa-sun' : 'fa-moon');
-                });
-            });
-
-            const sheetURL = 'https://script.google.com/macros/s/AKfycbw97rv9LNYV14SEAaCbRXdbcgpYPVQy1pwH2LfJ-Ma2JG2Yb4oQWEAQfIBxKXKjLpg/exec';
-
-            fetch(sheetURL)
-                .then(res => res.json())
-                .then(data => {
-                    headers = data[0];
-                    const rowsRaw = data.slice(1);
-                    rombelIndex = headers.findIndex(h => h.toLowerCase().includes('rombel'));
-                    tanggalIndexes = headers
-                        .map((h, i) => h.toLowerCase().includes('tanggal') ? i : -1)
-                        .filter(i => i !== -1);
-
-                    originalData = rowsRaw;
-
-                    const uniqueRombels = [...new Set(rowsRaw.map(row => row[rombelIndex]))].sort();
-                    uniqueRombels.forEach(r => {
-                        $('#rombelSelect').append(`<option value="${r}">${r}</option>`);
-                    });
-
-                    renderTable(isLoggedIn);
-                });
-        </script>
-
+    exportXlsx(name){
+      if(name==='absen') return this.exportAbsen();
+      const v=name==='aktif'?this.vAktif:this.vKeluar, cols=name==='aktif'?this.colsAktif:this.colsKeluar;
+      const data=v.rows.map((r,i)=>{ const o={No:i+1}; cols.forEach(c=>{ o[c.k]=this.tampil(r,c); }); return o; });
+      const ws=XLSX.utils.json_to_sheet(data);
+      ws['!cols']=Object.keys(data[0]||{No:1}).map(k=>({wch:Math.max(k.length,...data.map(d=>String(d[k]??'').length))+2}));
+      const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,name==='aktif'?'Siswa Aktif':'PD Keluar');
+      const f=this.t.aktif.filter;
+      XLSX.writeFile(wb,`Siswa-Aktif${f?'-Kelas-'+f:''}-SDN01-TotoRejo-${this.todayISO()}.xlsx`);
+    }
+  };
+}
+</script>
 </body>
-
 </html>
