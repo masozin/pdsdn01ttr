@@ -111,6 +111,48 @@ code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
 .age-note{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-size:13px}
 .age-note input{width:auto;padding:6px 10px}
 
+/* ---- Lembar Absen ---- */
+.tabs{display:inline-grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#eef0ff;border-radius:12px}
+.tabs button{border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:8px 18px;border-radius:9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.3}
+.tabs button small{font-weight:400;font-size:11px}
+.tabs button.on{background:#fff;color:var(--primary);box-shadow:0 1px 6px rgba(30,36,64,.15)}
+.lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.lcard{display:flex;flex-direction:column;gap:2px;padding:14px;border:1.5px solid var(--line);border-radius:14px;text-decoration:none;color:var(--ink);background:#fff;transition:.15s;font:inherit;text-align:left;cursor:pointer}
+.lcard:hover{border-color:var(--primary);background:#f8f8ff;transform:translateY(-1px)}
+.lcard .ti{font-size:22px;color:var(--aktif)}
+.lcard b{font-size:15px}
+.lcard small{color:var(--muted);font-size:12px}
+.lcard.none{border-style:dashed;background:transparent}
+.lcard.none .ti{color:#b0b6d0}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:420px}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg span{display:flex;flex-direction:column;align-items:center;padding:10px 8px;border:1.5px solid var(--line);border-radius:12px;transition:.15s}
+.seg small{color:var(--muted);font-size:12px}
+.seg input:checked+span{border-color:var(--primary);background:#eef0ff}
+.seg input:focus-visible+span{box-shadow:0 0 0 3px rgba(79,70,229,.2)}
+.form{max-width:560px}
+.flabel{display:block;margin:16px 0 6px;font-weight:600;font-size:13px}
+.flabel .hint{font-weight:400;color:var(--muted)}
+.ibox{margin-top:14px;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);font-size:13px}
+.ibox.done{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+.ibox.none{background:#fffbeb;border-color:#fde68a;color:#92400e}
+.ibox a{display:inline-block;margin-top:8px;padding:8px 14px;border-radius:10px;background:#10b981;color:#fff;font-weight:700;text-decoration:none}
+.fmsg{margin-top:14px;padding:10px 12px;border-radius:10px;font-size:13px}
+.fmsg.err{background:#fef2f2;color:#b91c1c}
+.fmsg.ok{background:#ecfdf5;color:#047857}
+.btn-outline{background:transparent;color:var(--primary);border:1.5px solid var(--primary)}
+.btn-ghost{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn-wide{width:100%;justify-content:center;margin-top:20px}
+.layer{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(15,20,45,.55);backdrop-filter:blur(3px)}
+.dlg{width:100%;max-width:380px;padding:24px;border-radius:16px;background:#fff;text-align:center;box-shadow:var(--shadow)}
+.dlg h2{font-size:17px;margin-bottom:8px}
+.dlg p{color:var(--muted);font-size:14px}
+.dlg .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.dlg .row .btn{justify-content:center}
+input[type=password]{font:inherit;padding:10px 14px;border:1px solid var(--line);border-radius:12px;width:100%;outline:none;margin-top:14px;text-align:center;letter-spacing:4px}
+input[type=password]:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.12)}
+
 @media(max-width:900px){
   .layout{flex-direction:column}
   .sidebar{width:100%;height:auto;position:sticky;top:0;z-index:20;padding:10px 12px;flex-direction:row;align-items:center;gap:8px;overflow-x:auto}
@@ -140,7 +182,7 @@ code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
       <button :class="{on:page==='aktif'}" @click="go('aktif')"><i class="ti ti-users ico"></i>Siswa Aktif<span class="badge" x-text="loaded?cnt.aktif:'-'"></span></button>
       <button :class="{on:page==='keluar'}" @click="go('keluar')"><i class="ti ti-door-exit ico"></i>PD Keluar<span class="badge" x-text="loaded?keluarRows.length:'-'"></span></button>
       <button :class="{on:page==='absen'}" @click="go('absen')"><i class="ti ti-calendar-check ico"></i>Rekap Absen<span class="badge" x-text="absenReady?absenRows.length:'-'"></span></button>
-      <button @click="window.open('https://masozin.github.io/dh-siswa/', '_blank')"><i class="ti ti-vocabulary ico"></i>Lembar Absen</button>
+      <button :class="{on:page==='lembar'}" @click="go('lembar')"><i class="ti ti-clipboard-list ico"></i>Lembar Absen<span class="badge" x-text="gen.ready?Object.keys(gen.hasil).length:'-'"></span></button>
     </nav>
     <div class="side-foot">Sumber: Google Sheets<br>Sheet <b x-text="cfg.SHEET_NAME"></b></div>
   </aside>
@@ -149,7 +191,7 @@ code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
   <main class="main">
     <div class="topbar">
       <div>
-        <h1 x-text="{dashboard:'Ringkasan Data Siswa',aktif:'Daftar Siswa Aktif',keluar:'Daftar Peserta Didik Keluar',absen:'Rekap Absensi Siswa'}[page]"></h1>
+        <h1 x-text="{dashboard:'Ringkasan Data Siswa',aktif:'Daftar Siswa Aktif',keluar:'Daftar Peserta Didik Keluar',absen:'Rekap Absensi Siswa',lembar:'Lembar Absen (Daftar Hadir)'}[page]"></h1>
         <p><span x-text="cfg.NAMA_SEKOLAH"></span> · <span x-text="updatedAt ? 'Data dimuat '+updatedAt : 'Belum ada data'"></span></p>
       </div>
       <button class="btn btn-primary" @click="load()" :disabled="loading">
@@ -339,6 +381,84 @@ code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
       </section>
 
 
+      <!-- ======== 5. LEMBAR ABSEN (generator) ======== -->
+      <section x-show="page==='lembar'">
+        <div class="state" x-show="gen.loading && !gen.ready && !gen.error"><div class="loader"></div><b>Memuat data lembar absen…</b></div>
+
+        <div class="state err" x-show="gen.error" x-cloak>
+          <b style="font-size:16px"><i class="ti ti-alert-triangle" style="color:#ef4444;vertical-align:-2px"></i> Generator lembar absen belum bisa diakses</b>
+          <p style="margin-top:6px" x-text="gen.error"></p>
+          <ul>
+            <li>Pastikan <code>GENERATOR_URL</code> di bagian <code>CONFIG</code> berisi URL Web App generator (berakhiran <code>/exec</code>).</li>
+            <li>Pastikan Web App generator di-deploy dengan <b>Akses: Siapa saja</b>.</li>
+            <li>Pastikan spreadsheet referensi generator punya sheet <code>Data Siswa</code>, <code>Hari Libur</code>, <code>Data Guru</code>, dan <code>Hasil</code>.</li>
+          </ul>
+        </div>
+
+        <div x-show="gen.ready && !gen.error">
+
+          <!-- tampilan daftar -->
+          <div class="panel" x-show="gen.view==='list'">
+            <div class="toolbar">
+              <div class="tabs" role="tablist" aria-label="Pilih semester">
+                <button type="button" role="tab" :class="{on:gen.tab==='Ganjil'}" :aria-selected="gen.tab==='Ganjil'" @click="gen.tab='Ganjil'"><span>Semester Ganjil</span><small>Juli - Desember</small></button>
+                <button type="button" role="tab" :class="{on:gen.tab==='Genap'}" :aria-selected="gen.tab==='Genap'" @click="gen.tab='Genap'"><span>Semester Genap</span><small>Januari - Juni</small></button>
+              </div>
+              <span style="flex:1"></span>
+              <a class="btn btn-ghost" x-show="cfg.LINK_REKAP" :href="safeUrl(cfg.LINK_REKAP)" target="_blank" rel="noopener noreferrer"><i class="ti ti-external-link"></i> Lihat Rekap</a>
+              <button type="button" class="btn btn-primary" @click="bukaForm()"><i class="ti ti-plus"></i> Buat lembar absen baru</button>
+            </div>
+            <p style="color:var(--muted);font-size:13px;margin:4px 0 14px">Tahun pelajaran <b x-text="gen.tahun"></b> · Semester <span x-text="gen.tab"></span>: <b x-text="genDone"></b> dari <b x-text="genItems.length"></b> kelas sudah dibuat.</p>
+            <div class="lgrid">
+              <template x-for="it in genItems" :key="it.kelas">
+                <div style="display:contents">
+                  <template x-if="it.h"><a class="lcard" :href="safeUrl(it.h.url)" target="_blank" rel="noopener"><i class="ti ti-file-spreadsheet"></i><b x-text="it.kelas"></b><small x-text="'Dibuat '+String(it.h.tanggal||'-').split(' ')[0]"></small></a></template>
+                  <template x-if="!it.h"><button type="button" class="lcard none" @click="bukaForm(it.kelas)"><i class="ti ti-plus"></i><b x-text="it.kelas"></b><small>Belum dibuat · klik untuk membuat</small></button></template>
+                </div>
+              </template>
+            </div>
+            <div class="empty" x-show="!genItems.length">Belum ada data kelas di spreadsheet referensi generator.</div>
+          </div>
+
+          <!-- tampilan form -->
+          <div class="panel form" x-show="gen.view==='form'">
+            <button type="button" class="btn btn-ghost" style="padding:6px 12px;margin-bottom:14px" @click="gen.view='list'"><i class="ti ti-arrow-left"></i> Kembali ke daftar</button>
+            <h3><i class="ti ti-file-plus"></i> Buat lembar absen baru</h3>
+
+            <label class="flabel">Semester</label>
+            <div class="seg">
+              <label><input type="radio" name="gSem" value="Ganjil" x-model="gen.form.semester" @change="genMsg('')"><span><b>Ganjil</b><small>Juli - Desember</small></span></label>
+              <label><input type="radio" name="gSem" value="Genap" x-model="gen.form.semester" @change="genMsg('')"><span><b>Genap</b><small>Januari - Juni</small></span></label>
+            </div>
+
+            <label class="flabel" for="gKelas">Kelas / rombel</label>
+            <select id="gKelas" x-model="gen.form.kelas" @change="genMsg('')">
+              <option value="">- Pilih kelas -</option>
+              <template x-for="k in gen.kelas" :key="k"><option :value="k" x-text="k+(gen.hasil[genKey(k,gen.form.semester)]?'  ✓ sudah dibuat':'')"></option></template>
+            </select>
+            <p style="color:var(--muted);font-size:12px;margin-top:6px">Semester <span x-text="gen.form.semester"></span>: <span x-text="gen.kelas.filter(k=>gen.hasil[genKey(k,gen.form.semester)]).length"></span> dari <span x-text="gen.kelas.length"></span> kelas sudah dibuat.</p>
+
+            <template x-if="gen.form.kelas && genH()">
+              <div class="ibox done"><b>Sudah dibuat</b><div>Dibuat pada <span x-text="genH().tanggal||'-'"></span>.</div><a :href="safeUrl(genH().url)" target="_blank" rel="noopener">Buka daftar hadir</a></div>
+            </template>
+            <template x-if="gen.form.kelas && !genH()">
+              <div class="ibox none"><b>Belum dibuat</b><div>Isi wali kelas di bawah, lalu klik Generate.</div></div>
+            </template>
+
+            <label class="flabel" for="gWali">Wali kelas <span class="hint">(ketik atau pilih dari daftar)</span></label>
+            <input type="text" id="gWali" list="daftarGuru" placeholder="Nama wali kelas" autocomplete="off" x-model="gen.form.wali" @input="genIsiNip()">
+            <datalist id="daftarGuru"><template x-for="(g,i) in gen.guru" :key="i"><option :value="g.nama"></option></template></datalist>
+
+            <label class="flabel" for="gNip">NIP <span class="hint">(terisi otomatis jika guru ada di daftar)</span></label>
+            <input type="text" id="gNip" placeholder="NIP wali kelas" inputmode="numeric" x-model="gen.form.nip">
+
+            <button type="button" id="gBtn" class="btn btn-wide" :class="genH()?'btn-outline':'btn-primary'" @click="genKlik()" x-text="genH()?'Generate ulang':'Generate daftar hadir'"></button>
+            <div class="fmsg" :class="gen.form.msgType" x-show="gen.form.msg" x-text="gen.form.msg" role="status"></div>
+          </div>
+
+        </div>
+      </section>
+
       <!-- ======== 4. REKAP ABSEN ======== -->
       <section x-show="page==='absen'">
         <div class="state" x-show="absenLoading && !absenReady && !absenError"><div class="loader"></div><b>Mengambil data absen…</b></div>
@@ -451,12 +571,42 @@ code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
   </main>
 </div>
 
+<!-- generator: layar loading, konfirmasi generate ulang, PIN -->
+<div class="layer" x-show="gen.busy" x-cloak style="z-index:60" role="alertdialog" aria-busy="true">
+  <div class="dlg"><div class="loader"></div><p style="color:var(--ink)" x-text="gen.busyText"></p></div>
+</div>
+<div class="layer" x-show="gen.confirm.show" x-cloak role="dialog" aria-modal="true">
+  <div class="dlg">
+    <h2>Daftar hadir sudah dibuat</h2>
+    <p x-text="gen.confirm.desc"></p>
+    <div class="row">
+      <button type="button" id="cNo" class="btn btn-ghost" @click="genConfirmDone(false)">Batal</button>
+      <button type="button" id="cYes" class="btn btn-primary" @click="genConfirmDone(true)">Generate ulang</button>
+    </div>
+  </div>
+</div>
+<div class="layer" x-show="gen.pin.show" x-cloak style="z-index:70" role="dialog" aria-modal="true">
+  <div class="dlg">
+    <h2>PIN generator</h2>
+    <p x-text="gen.pin.wrong?'PIN salah. Coba lagi.':'Masukkan PIN untuk mengakses generator lembar absen.'"></p>
+    <input type="password" id="pinInput" x-ref="pinInput" x-model="gen.pin.value" @keydown.enter="pinDone(true)" autocomplete="off" inputmode="numeric">
+    <div class="row">
+      <button type="button" class="btn btn-ghost" @click="pinDone(false)">Batal</button>
+      <button type="button" id="pinOk" class="btn btn-primary" @click="pinDone(true)">Masuk</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ================= KONFIGURASI ================= */
 const CONFIG = {
   NAMA_SEKOLAH   : 'SD Negeri 01 Toto Rejo',
   // URL Web App Apps Script (hasil Deploy, berakhiran /exec)
   API_URL        : 'https://script.google.com/macros/s/AKfycbyo6JkbRplmXvUe3HAA1HgY1s9oKmRnRj6xmKv6RdAZ-DEqpl5u8py4TGd4DY-8BaUS/exec',
+  // URL Web App GENERATOR lembar absen (script terpisah, berakhiran /exec)
+  GENERATOR_URL  : 'https://script.google.com/macros/s/AKfycbxMYCUALgzeA0PAWGpADK6xAC_VLCHv3nHfEvdvp_VH8EkZ0kXZ8SkO-2qfqaY1zZ2e/exec',
+  // Tombol "Lihat Rekap" di menu Lembar Absen (spreadsheet data absensi); kosongkan untuk menyembunyikan
+  LINK_REKAP     : 'https://docs.google.com/spreadsheets/d/1VG5iAEOROZPxNn-RLQS3f63ODj7ocyp_-3bYyuuGDVY/edit?gid=1335968841#gid=1335968841',
   SHEET_NAME     : 'APPDATA',
   TAMPILKAN_NIK  : false   // NIK sensitif; ubah ke true jika ingin ditampilkan di tabel & XLSX
 };
@@ -540,6 +690,9 @@ function app(){
     kelasList:[], ketList:[], keluarRows:[],
     absenRaw:{ganjil:[],genap:[]}, absenRows:[], absenReady:false, absenLoading:false, absenError:'', absenWarn:'',
     semester:'Genap', absenSum:{siswa:0,H:0,S:0,I:0,A:0,rata:null}, absenKelas:[], absenKelasRekap:[],
+    gen:{loading:false,ready:false,error:'',tahun:'',kelas:[],guru:[],hasil:{},tab:'Ganjil',view:'list',
+         form:{semester:'Ganjil',kelas:'',wali:'',nip:'',msg:'',msgType:''},
+         busy:false,busyText:'',confirm:{show:false,desc:'',res:null},pin:{show:false,value:'',wrong:false,res:null}},
     t:{ aktif:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, keluar:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, absen:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25} },
 
     colsAktif: kolom(['Nama','Rombel','JK','NIPD','NISN','Tempat Lahir',dateCol('Tanggal Lahir','_lahir'),...nikCol,'Agama','Nama Ayah','Nama Ibu',dateCol('Tgl Masuk','_masuk')]),
@@ -557,7 +710,8 @@ function app(){
       this.loading=true; this.error='';
       try{
         if(!CONFIG.API_URL || CONFIG.API_URL.startsWith('GANTI')) throw new Error('API_URL (URL Web App Apps Script) belum diisi.');
-        const pAbsen=this.loadAbsen();   // data absen dimuat bersamaan, kegagalannya tidak mengganggu data siswa
+        const pAbsen=this.loadAbsen();
+        this.loadGen();   // generator lembar absen: dimuat bersamaan, gagalnya tidak mengganggu menu lain   // data absen dimuat bersamaan, kegagalannya tidak mengganggu data siswa
         const res=await fetch(CONFIG.API_URL+(CONFIG.API_URL.includes('?')?'&':'?')+'_='+Date.now());
         if(!res.ok) throw new Error('Server menjawab status '+res.status+'.');
         const txt=await res.text();
@@ -573,6 +727,126 @@ function app(){
         this.error=(e&&e.message)||String(e);
         if(!this.loaded) this.students=[];
       }finally{ this.loading=false; }
+    },
+
+    /* ---- LEMBAR ABSEN (generator terpisah, lewat GENERATOR_URL) ---- */
+    safeUrl(u){ u=String(u||''); return /^https:\/\//i.test(u)?u:'#'; },
+    genKey(k,s){ return k+'|'+s; },
+    genH(){ return this.gen.hasil[this.genKey(this.gen.form.kelas,this.gen.form.semester)]||null; },
+    genMsg(t,c){ this.gen.form.msg=t||''; this.gen.form.msgType=c||''; },
+    genSemesterSekarang(tahun){
+      const t=String(tahun).split('/').map(Number); if(t.length!==2||t.some(isNaN)) return 'Ganjil';
+      const n=new Date(), ym=n.getFullYear()*100+n.getMonth()+1;
+      return ym>=t[1]*100+1?'Genap':'Ganjil';
+    },
+    genToken(v){
+      if(v!==undefined){ this._pin=v; try{ localStorage.setItem('sdn01_gen_pin',v); }catch(_){} return v; }
+      if(this._pin!==undefined) return this._pin;
+      try{ return localStorage.getItem('sdn01_gen_pin')||''; }catch(_){ return ''; }
+    },
+    askPin(salah){
+      return new Promise(res=>{
+        this.gen.pin={show:true,value:'',wrong:!!salah,res};
+        if(this.$nextTick) this.$nextTick(()=>{ const i=this.$refs&&this.$refs.pinInput; if(i) i.focus(); });
+      });
+    },
+    pinDone(ok){
+      const p=this.gen.pin, v=ok?String(p.value||'').trim():null;
+      this.gen.pin={show:false,value:'',wrong:false,res:null};
+      if(p.res) p.res(v||null);
+    },
+    /* panggil generator; jika server meminta PIN (error PIN_DIBUTUHKAN) tampilkan dialog PIN lalu ulangi */
+    async genApi(params){
+      if(!CONFIG.GENERATOR_URL||CONFIG.GENERATOR_URL.startsWith('GANTI')) throw new Error('GENERATOR_URL belum diisi.');
+      for(let kali=0;;kali++){
+        const q={...params}, tk=this.genToken(); if(tk) q.token=tk;
+        let d;
+        try{
+          const res=await fetch(CONFIG.GENERATOR_URL+'?'+new URLSearchParams(q));
+          d=await res.json();
+        }catch(e){
+          const er=new Error('Koneksi ke generator terputus, atau responsnya bukan JSON. Pastikan Web App generator di-deploy dengan akses "Siapa saja".');
+          er.jaringan=true; throw er;
+        }
+        if(d&&d.ok) return d;
+        if(d&&d.error==='PIN_DIBUTUHKAN'){
+          if(kali>=5) throw new Error('PIN salah terlalu banyak.');
+          const pin=await this.askPin(kali>0||!!this.genToken());
+          if(!pin) throw new Error('PIN diperlukan untuk mengakses generator.');
+          this.genToken(pin); continue;
+        }
+        throw new Error((d&&d.error)||'Terjadi kesalahan.');
+      }
+    },
+    async loadGen(){
+      if(this.gen.loading) return;
+      this.gen.loading=true; this.gen.error='';
+      try{
+        const d=await this.genApi({action:'init'});
+        const h={}; (d.hasil||[]).forEach(x=>{ h[this.genKey(x.kelas,x.semester)]={kelas:x.kelas,semester:x.semester,url:x.url,tanggal:x.tanggal}; });
+        this.gen.tahun=d.tahun; this.gen.kelas=d.kelas||[]; this.gen.guru=d.guru||[]; this.gen.hasil=h;
+        if(!this.gen.ready) this.gen.tab=this.genSemesterSekarang(d.tahun);
+        this.gen.ready=true;
+      }catch(e){ this.gen.error=(e&&e.message)||String(e); }
+      finally{ this.gen.loading=false; }
+    },
+    bukaForm(kelas){
+      const f=this.gen.form; f.semester=this.gen.tab; f.kelas=kelas||''; this.genMsg('');
+      this.gen.view='form'; window.scrollTo({top:0,behavior:'smooth'});
+    },
+    genIsiNip(){
+      const n=this.gen.form.wali.trim().toLowerCase();
+      const g=this.gen.guru.find(x=>String(x.nama).toLowerCase()===n);
+      if(g) this.gen.form.nip=String(g.nip||'');
+    },
+    genConfirm(tgl){
+      return new Promise(res=>{
+        this.gen.confirm={show:true,res,desc:'Dibuat pada '+tgl+'. Generate ulang akan membuat file baru dan memperbarui tautan di sheet Hasil. File lama tidak dihapus.'};
+      });
+    },
+    genConfirmDone(v){
+      const r=this.gen.confirm.res;
+      this.gen.confirm={show:false,desc:'',res:null};
+      if(r) r(v);
+    },
+    async genKlik(){
+      const f=this.gen.form; this.genMsg('');
+      if(!f.kelas) return this.genMsg('Pilih kelas terlebih dahulu.','err');
+      if(!f.wali.trim()) return this.genMsg('Isi nama wali kelas.','err');
+      const h=this.genH();
+      if(h && !(await this.genConfirm(h.tanggal||'-'))) return;
+      this.genGenerate(!!h);
+    },
+    /* jika koneksi putus saat generate (bisa makan ~1 menit), cek apakah lembarnya ternyata sudah jadi */
+    async genPulih(e,kelas,s,prev){
+      if(!e||!e.jaringan) return null;
+      for(let i=0;i<6;i++){
+        await new Promise(r=>setTimeout(r,5000));
+        try{
+          const c=await this.genApi({action:'cek',kelas,semester:s});
+          if(c.ada && (!prev||c.tanggal!==prev.tanggal)) return {url:c.url,tanggal:c.tanggal};
+        }catch(_){}
+      }
+      return null;
+    },
+    async genGenerate(force){
+      const f=this.gen.form, kelas=f.kelas, s=f.semester, prev=this.genH();
+      const p={action:'generate',kelas,wali:f.wali.trim(),nip:f.nip.trim(),semester:s};
+      if(force) p.force='1';
+      this.gen.busy=true; this.gen.busyText='Sedang membuat daftar hadir. Bisa sampai 1 menit, jangan tutup halaman.';
+      let d;
+      try{ d=await this.genApi(p); }
+      catch(e){
+        d=await this.genPulih(e,kelas,s,prev);
+        if(!d){ this.gen.busy=false; return this.genMsg('Gagal: '+e.message,'err'); }
+      }
+      this.gen.hasil[this.genKey(kelas,s)]={kelas,semester:s,url:d.url,tanggal:d.tanggal};
+      this.gen.tab=s; this.gen.busy=false;
+      if(d.sudahAda){   // data di layar usang: ternyata sudah dibuat dari perangkat lain
+        if(await this.genConfirm(d.tanggal||'-')) return this.genGenerate(true);
+        return;
+      }
+      this.genMsg('Berhasil dibuat'+(d.jumlahSiswa?' untuk '+d.jumlahSiswa+' siswa':'')+'. Klik "Buka daftar hadir" di atas.','ok');
     },
 
     /* ---- REKAP ABSEN (spreadsheet terpisah, lewat ?data=absen) ---- */
@@ -745,6 +1019,12 @@ function app(){
     get vAktif(){ return this.olahTabel('aktif',this.students.filter(x=>x.Ket==='Aktif'),this.colsAktif,(r,f)=>!f||r.Rombel===f); },
     get vKeluar(){ return this.olahTabel('keluar',this.keluarRows,this.colsKeluar,(r,f)=>!f||(r.Ket||'(Kosong)')===f); },
 
+    get genItems(){
+      const t=this.gen.tab, ks=[...this.gen.kelas];
+      Object.values(this.gen.hasil).forEach(h=>{ if(h.semester===t && !ks.includes(h.kelas)) ks.push(h.kelas); });
+      return ks.map(k=>({kelas:k,h:this.gen.hasil[this.genKey(k,t)]||null}));
+    },
+    get genDone(){ return this.genItems.filter(x=>x.h).length; },
     get vAbsen(){ return this.olahTabel('absen',this.absenRows,this.colsAbsen,(r,f)=>!f||r.Kelas===f); },
 
     exportAbsen(){
