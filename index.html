@@ -129,6 +129,9 @@ table.kl th.stk1 .arrow{display:none}
 table.kl .stk2{left:56px;box-shadow:2px 0 0 var(--line);font-weight:600}
 table.kl thead th.stk1,table.kl thead th.stk2{background:#f7f8fe;z-index:3}
 table.kl tbody tr:hover td.stk1,table.kl tbody tr:hover td.stk2{background:#fafbff}
+@media(max-width:700px){
+  table.kl .stk2{position:static;box-shadow:none}
+}
 .print-only{display:none}
 @media print{
   @page{size:A4 landscape;margin:8mm}
