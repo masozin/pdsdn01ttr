@@ -111,6 +111,40 @@ code{background:#eef0ff;padding:1px 6px;border-radius:6px;font-size:12px}
 .age-note{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px;color:var(--muted);font-size:13px}
 .age-note input{width:auto;padding:6px 10px}
 
+/* ---- Klaper ---- */
+.abc{display:flex;flex-wrap:wrap;gap:6px}
+.abc-b{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:44px;padding:6px 8px;border:1.5px solid var(--line);border-radius:10px;background:#fff;font:inherit;cursor:pointer;line-height:1.2;transition:.15s;color:var(--ink)}
+.abc-b b{font-size:15px}
+.abc-b small{font-size:11px;color:var(--muted)}
+.abc-b:hover:not(:disabled){border-color:var(--primary);background:#f8f8ff}
+.abc-b.on{background:linear-gradient(135deg,var(--primary),var(--primary2));border-color:transparent;box-shadow:0 4px 12px rgba(79,70,229,.3);color:#fff}
+.abc-b.on small{color:rgba(255,255,255,.85)}
+.abc-b:disabled{opacity:.35;cursor:default}
+.abc-b.all{padding:6px 14px}
+  table.kl{border-collapse:separate;border-spacing:0}
+table.kl thead th{z-index:2}
+table.kl .stk1,table.kl .stk2{position:sticky;background:#fff}
+table.kl .stk1{left:0;width:56px;min-width:56px;max-width:56px;padding-left:12px;padding-right:8px;text-align:left}
+table.kl th.stk1 .arrow{display:none}
+table.kl .stk2{left:56px;box-shadow:2px 0 0 var(--line);font-weight:600}
+table.kl thead th.stk1,table.kl thead th.stk2{background:#f7f8fe;z-index:3}
+table.kl tbody tr:hover td.stk1,table.kl tbody tr:hover td.stk2{background:#fafbff}
+.print-only{display:none}
+@media print{
+  @page{size:A4 landscape;margin:8mm}
+  body{background:#fff}
+  .sidebar,.topbar,.no-print,.layer{display:none!important}
+  .main{padding:0}
+  .panel{box-shadow:none;padding:0}
+  .print-only{display:block}
+  .print-only h2{text-align:center;font-size:13pt;margin:0}
+  .print-only p{text-align:center;margin:2px 0;font-size:10pt}
+  .print-only table{font-size:6.5pt;white-space:normal;margin-top:6px}
+  .print-only th,.print-only td{padding:2px 3px;border:1px solid #444;color:#000;text-align:left}
+  .print-only thead{display:table-header-group}
+  .print-only tr{page-break-inside:avoid}
+}
+
 /* ---- Lembar Absen ---- */
 .tabs{display:inline-grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;background:#eef0ff;border-radius:12px}
 .tabs button{border:0;background:transparent;font:inherit;font-weight:600;color:var(--muted);padding:8px 18px;border-radius:9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;line-height:1.3}
@@ -181,6 +215,7 @@ input[type=password]:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba
       <button :class="{on:page==='dashboard'}" @click="go('dashboard')"><i class="ti ti-layout-dashboard ico"></i>Dashboard</button>
       <button :class="{on:page==='aktif'}" @click="go('aktif')"><i class="ti ti-users ico"></i>Siswa Aktif<span class="badge" x-text="loaded?cnt.aktif:'-'"></span></button>
       <button :class="{on:page==='keluar'}" @click="go('keluar')"><i class="ti ti-door-exit ico"></i>PD Keluar<span class="badge" x-text="loaded?keluarRows.length:'-'"></span></button>
+      <button :class="{on:page==='klaper'}" @click="go('klaper')"><i class="ti ti-book ico"></i>Klaper<span class="badge" x-text="loaded?klaper.length:'-'"></span></button>
       <button :class="{on:page==='absen'}" @click="go('absen')"><i class="ti ti-calendar-check ico"></i>Rekap Absen<span class="badge" x-text="absenReady?absenRows.length:'-'"></span></button>
       <button :class="{on:page==='lembar'}" @click="go('lembar')"><i class="ti ti-clipboard-list ico"></i>Lembar Absen<span class="badge" x-text="gen.ready?Object.keys(gen.hasil).length:'-'"></span></button>
     </nav>
@@ -191,7 +226,7 @@ input[type=password]:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba
   <main class="main">
     <div class="topbar">
       <div>
-        <h1 x-text="{dashboard:'Ringkasan Data Siswa',aktif:'Daftar Siswa Aktif',keluar:'Daftar Peserta Didik Keluar',absen:'Rekap Absensi Siswa',lembar:'Lembar Absen (Daftar Hadir)'}[page]"></h1>
+        <h1 x-text="{dashboard:'Ringkasan Data Siswa',aktif:'Daftar Siswa Aktif',keluar:'Daftar Peserta Didik Keluar',absen:'Rekap Absensi Siswa',lembar:'Lembar Absen (Daftar Hadir)',klaper:'Buku Klaper Peserta Didik'}[page]"></h1>
         <p><span x-text="cfg.NAMA_SEKOLAH"></span> · <span x-text="updatedAt ? 'Data dimuat '+updatedAt : 'Belum ada data'"></span></p>
       </div>
       <button class="btn btn-primary" @click="load()" :disabled="loading">
@@ -380,6 +415,80 @@ input[type=password]:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba
         </div>
       </section>
 
+
+      <!-- ======== 6. KLAPER ======== -->
+      <section x-show="page==='klaper'">
+        <div class="panel no-print" style="margin-bottom:18px">
+          <h3><i class="ti ti-letter-case"></i> Indeks Abjad <span class="tag">huruf awal nama</span></h3>
+          <div class="abc">
+            <button type="button" class="abc-b all" :class="{on:!t.klaper.huruf}" @click="t.klaper.huruf='';t.klaper.page=1"><b>Semua</b><small x-text="klRowsBase.length"></small></button>
+            <template x-for="h in klIndex" :key="h.l">
+              <button type="button" class="abc-b" :class="{on:t.klaper.huruf===h.l}" :disabled="!h.n" @click="klPilihHuruf(h.l)"><b x-text="h.l"></b><small x-text="h.n"></small></button>
+            </template>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="toolbar no-print">
+            <div class="search grow"><i class="ti ti-search"></i><input type="text" placeholder="Cari nama…" x-model.debounce.200ms="t.klaper.q" @input="t.klaper.page=1"></div>
+            <select x-model="t.klaper.status" @change="t.klaper.page=1">
+              <option value="">Semua Status</option>
+              <option value="aktif">Aktif</option>
+              <option value="bukan">Bukan Aktif</option>
+            </select>
+            <button type="button" class="btn btn-green" @click="exportXlsx('klaper')"><i class="ti ti-file-spreadsheet"></i> Download XLSX</button>
+            <button type="button" class="btn btn-ghost" @click="cetakKlaper()"><i class="ti ti-printer"></i> Cetak</button>
+          </div>
+
+          <div class="scroll no-print" style="max-height:68vh">
+            <table class="kl">
+              <thead><tr>
+                <template x-for="c in colsKlaper" :key="c.k">
+                  <th class="sortable" :class="{stk1:c.k==='No',stk2:c.k==='Nama'}" @click="sortBy('klaper',c)"><span x-text="c.k"></span><span class="arrow" :class="{on:t.klaper.sort===c.k}" x-text="t.klaper.sort===c.k?(t.klaper.dir>0?'▲':'▼'):'↕'"></span></th>
+                </template>
+              </tr></thead>
+              <tbody>
+                <template x-for="r in vKlaper.pageRows" :key="r._id">
+                  <tr>
+                    <template x-for="c in colsKlaper" :key="c.k">
+                      <td :class="{stk1:c.k==='No',stk2:c.k==='Nama'}">
+                        <template x-if="c.k==='JK'"><span class="jk" :class="r.JK" x-text="r.JK||'-'"></span></template>
+                        <template x-if="c.k!=='JK'"><span x-text="kl(r,c)"></span></template>
+                      </td>
+                    </template>
+                  </tr>
+                </template>
+                <tr x-show="!vKlaper.rows.length"><td :colspan="colsKlaper.length" class="empty">Tidak ada data yang cocok</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="pager no-print">
+            <div>Menampilkan <b x-text="vKlaper.rows.length?vKlaper.start+1:0"></b>–<b x-text="vKlaper.start+vKlaper.pageRows.length"></b> dari <b x-text="vKlaper.rows.length"></b> peserta didik</div>
+            <div class="btns">
+              <select x-model.number="t.klaper.per" @change="t.klaper.page=1"><option>25</option><option>50</option><option>100</option><option value="100000">Semua</option></select>
+              <button type="button" :disabled="t.klaper.page<=1" @click="t.klaper.page--">‹ Prev</button>
+              <span x-text="t.klaper.page+' / '+vKlaper.pages"></span>
+              <button type="button" :disabled="t.klaper.page>=vKlaper.pages" @click="t.klaper.page++">Next ›</button>
+            </div>
+          </div>
+
+          <!-- versi cetak: semua baris hasil filter (bukan hanya satu halaman) -->
+          <div class="print-only">
+            <h2>BUKU KLAPER PESERTA DIDIK</h2>
+            <p style="font-weight:700" x-text="cfg.NAMA_SEKOLAH.toUpperCase()"></p>
+            <p style="font-size:8pt" x-text="'Status: '+({'':'Semua',aktif:'Aktif',bukan:'Bukan Aktif'})[t.klaper.status]+(t.klaper.huruf?' · Huruf: '+t.klaper.huruf:'')+' · '+vKlaper.rows.length+' peserta didik · dicetak '+todayISO()"></p>
+            <table>
+              <thead><tr><template x-for="c in colsKlaper" :key="c.k"><th x-text="c.k"></th></template></tr></thead>
+              <tbody>
+                <template x-for="r in vKlaper.rows" :key="r._id">
+                  <tr><template x-for="c in colsKlaper" :key="c.k"><td x-text="kl(r,c)"></td></template></tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       <!-- ======== 5. LEMBAR ABSEN (generator) ======== -->
       <section x-show="page==='lembar'">
@@ -687,17 +796,19 @@ function app(){
     students:[], refDate:'',
     cnt:{aktif:0},
     statusList:[], pvJK:{rows:[],totals:[],grand:0}, pvAgama:{cols:[],rows:[],totals:[],grand:0}, pvUsia:{cols:[],rows:[],totals:[],grand:0},
-    kelasList:[], ketList:[], keluarRows:[],
+    kelasList:[], ketList:[], keluarRows:[], klaper:[],
     absenRaw:{ganjil:[],genap:[]}, absenRows:[], absenReady:false, absenLoading:false, absenError:'', absenWarn:'',
     semester:'Genap', absenSum:{siswa:0,H:0,S:0,I:0,A:0,rata:null}, absenKelas:[], absenKelasRekap:[],
     gen:{loading:false,ready:false,error:'',tahun:'',kelas:[],guru:[],hasil:{},tab:'Ganjil',view:'list',
          form:{semester:'Ganjil',kelas:'',wali:'',nip:'',msg:'',msgType:''},
          busy:false,busyText:'',confirm:{show:false,desc:'',res:null},pin:{show:false,value:'',wrong:false,res:null}},
-    t:{ aktif:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, keluar:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, absen:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25} },
+    t:{ aktif:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, keluar:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, absen:{q:'',filter:'',sort:'Nama',dir:1,page:1,per:25}, klaper:{q:'',status:'',huruf:'',sort:'Nama',dir:1,page:1,per:50} },
 
     colsAktif: kolom(['Nama','Rombel','JK','NIPD','NISN','Tempat Lahir',dateCol('Tanggal Lahir','_lahir'),...nikCol,'Agama','Nama Ayah','Nama Ibu',dateCol('Tgl Masuk','_masuk')]),
     colsKeluar: kolom(['Nama','Rombel','JK','NIPD','NISN','Ket',dateCol('Tgl Masuk','_masuk'),dateCol('Tgl Keluar','_keluar')]),
 
+    colsKlaper: kolom([{k:'No',f:'_no'},'Nama','JK','NIPD','NISN','Tempat Lahir',dateCol('Tanggal Lahir','_lahir'),'Agama','Nama Ayah','Nama Ibu',
+      dateCol('Tgl Masuk','_masuk'),'Sekolah Asal','Rombel Masuk',dateCol('Tgl Keluar','_keluar'),{k:'Rombel Keluar',f:'RombelKeluar'},{k:'Alasan Keluar',f:'AlasanKeluar'},'Sekolah Tujuan']),
     colsAbsen: kolom(['Nama','Kelas','NIS','NISN','H','S','I','A',{k:'%',f:'Persen'},{k:'Efektif',f:'Efektif'}]),
 
     todayISO(){ const d=new Date(); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); },
@@ -727,6 +838,19 @@ function app(){
         this.error=(e&&e.message)||String(e);
         if(!this.loaded) this.students=[];
       }finally{ this.loading=false; }
+    },
+
+    /* ---- KLAPER ---- */
+    kl(r,c,dash){ const v=this.tampil(r,c); return (v===''||v==null)?(dash===false?'':'-'):v; },
+    klPilihHuruf(l){ const st=this.t.klaper; st.huruf=st.huruf===l?'':l; st.page=1; },
+    cetakKlaper(){ window.print(); },
+    exportKlaper(){
+      const data=this.vKlaper.rows.map(r=>{ const o={}; this.colsKlaper.forEach(c=>{ o[c.k]=this.kl(r,c,false); }); return o; });
+      const ws=XLSX.utils.json_to_sheet(data);
+      ws['!cols']=this.colsKlaper.map(c=>({wch:Math.max(c.k.length,...data.map(d=>String(d[c.k]??'').length))+2}));
+      const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Klaper');
+      const h=this.t.klaper.huruf;
+      XLSX.writeFile(wb,`Klaper-SDN01-TotoRejo${h?'-Huruf-'+(h==='#'?'Lain':h):''}-${this.todayISO()}.xlsx`);
     },
 
     /* ---- LEMBAR ABSEN (generator terpisah, lewat GENERATOR_URL) ---- */
@@ -945,7 +1069,8 @@ function app(){
         const o={_id:++id, Nama:nama, Rombel:get(r,'Rombel'), JK:normJK(get(r,'JK')), NIPD:get(r,'NIPD'), NISN:get(r,'NISN'),
           Ket:normStatus(get(r,'Ket')), 'Tempat Lahir':get(r,'Tempat Lahir'), 'Tanggal Lahir':get(r,'Tanggal Lahir'),
           NIK:get(r,'NIK'), Agama:titleCase(get(r,'Agama')), 'Nama Ayah':get(r,'Nama Ayah'), 'Nama Ibu':get(r,'Nama Ibu'),
-          'Tgl Masuk':get(r,'Tgl Masuk'), 'Tgl Keluar':get(r,'Tgl Keluar')};
+          'Tgl Masuk':get(r,'Tgl Masuk'), 'Tgl Keluar':get(r,'Tgl Keluar'),
+          'Sekolah Asal':get(r,'Sekolah Asal'), 'Rombel Masuk':get(r,'Rombel Masuk'), 'Alasan Keluar':get(r,'Alasan Keluar'), 'Sekolah Tujuan':get(r,'Sekolah Tujuan')};
         o._lahir=parseTanggal(o['Tanggal Lahir']); o._masuk=parseTanggal(o['Tgl Masuk']); o._keluar=parseTanggal(o['Tgl Keluar']);
         o.tingkat=tingkatDari(o.Rombel);
         out.push(o);
@@ -963,6 +1088,11 @@ function app(){
       this.statusList=sl;
       const aktif=S.filter(x=>x.Ket==='Aktif'); this.cnt.aktif=aktif.length;
       this.keluarRows=S.filter(x=>x.Ket!=='Aktif');
+      // Klaper: semua siswa urut A-Z; No tetap mengikuti urutan ini. Rombel/Alasan Keluar hanya untuk Ket <> Aktif (Alasan kosong -> pakai Ket)
+      this.klaper=[...S].sort((a,b)=>cmp(a.Nama,b.Nama)).map((x,i)=>{
+        const keluar=x.Ket!=='Aktif', h=String(x.Nama).normalize('NFD').charAt(0).toUpperCase();
+        return {...x,_no:i+1,huruf:/[A-Z]/.test(h)?h:'#',RombelKeluar:keluar?x.Rombel:'',AlasanKeluar:keluar?(x['Alasan Keluar']||x.Ket):''};
+      });
       this.kelasList=[...new Set(aktif.map(x=>x.Rombel).filter(Boolean))].sort(cmp);
       this.ketList=[...new Set(this.keluarRows.map(x=>x.Ket||'(Kosong)'))].sort(cmp);
 
@@ -992,13 +1122,13 @@ function app(){
       const usiaStr=x=>{const u=hitungUsia(x._lahir,ref);return u==null?'?':String(u);};
       this.pvUsia=pivot(usiaStr,(a,b)=>a==='?'?1:b==='?'?-1:(+a)-(+b));
       // reset halaman tabel
-      this.t.aktif.page=1; this.t.keluar.page=1;
+      this.t.aktif.page=1; this.t.keluar.page=1; this.t.klaper.page=1;
       if(this.t.aktif.filter && !this.kelasList.includes(this.t.aktif.filter)) this.t.aktif.filter='';
       if(this.t.keluar.filter && !this.ketList.includes(this.t.keluar.filter)) this.t.keluar.filter='';
     },
 
     /* ---- tabel ---- */
-    tampil(r,c){ return c.date ? (fmtTgl(r[c.date])||r[c.k]||'') : (r[c.k]||''); },
+    tampil(r,c){ const f=c.f||c.k; return c.date ? (fmtTgl(r[c.date])||r[f]||'') : (r[f]||''); },
     warna(k){ const s=STATUS.find(x=>x.name===k); return s?s.color:(WARNA_LAIN[k]||'#a855f7'); },
     sortBy(name,c){
       const st=this.t[name];
@@ -1019,6 +1149,17 @@ function app(){
     get vAktif(){ return this.olahTabel('aktif',this.students.filter(x=>x.Ket==='Aktif'),this.colsAktif,(r,f)=>!f||r.Rombel===f); },
     get vKeluar(){ return this.olahTabel('keluar',this.keluarRows,this.colsKeluar,(r,f)=>!f||(r.Ket||'(Kosong)')===f); },
 
+    get klRowsBase(){   // status + pencarian, tanpa filter huruf (dasar hitungan indeks abjad)
+      const st=this.t.klaper, q=st.q.trim().toLowerCase();
+      return this.klaper.filter(r=>(!q||r.Nama.toLowerCase().includes(q)) && (st.status===''||(st.status==='aktif'?r.Ket==='Aktif':r.Ket!=='Aktif')));
+    },
+    get klIndex(){
+      const cnt={}; this.klRowsBase.forEach(r=>{ cnt[r.huruf]=(cnt[r.huruf]||0)+1; });
+      const out='ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l=>({l,n:cnt[l]||0}));
+      if(cnt['#']) out.push({l:'#',n:cnt['#']});
+      return out;
+    },
+    get vKlaper(){ const h=this.t.klaper.huruf; return this.olahTabel('klaper',this.klRowsBase.filter(r=>!h||r.huruf===h),this.colsKlaper,()=>true); },
     get genItems(){
       const t=this.gen.tab, ks=[...this.gen.kelas];
       Object.values(this.gen.hasil).forEach(h=>{ if(h.semester===t && !ks.includes(h.kelas)) ks.push(h.kelas); });
@@ -1038,6 +1179,7 @@ function app(){
 
     exportXlsx(name){
       if(name==='absen') return this.exportAbsen();
+      if(name==='klaper') return this.exportKlaper();
       const v=name==='aktif'?this.vAktif:this.vKeluar, cols=name==='aktif'?this.colsAktif:this.colsKeluar;
       const data=v.rows.map((r,i)=>{ const o={No:i+1}; cols.forEach(c=>{ o[c.k]=this.tampil(r,c); }); return o; });
       const ws=XLSX.utils.json_to_sheet(data);
